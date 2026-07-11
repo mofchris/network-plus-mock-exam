@@ -1,4 +1,4 @@
-/* Network+ Exam Simulator — shell, router, storage. Loads LAST; other modules
+/* Network+ Exam Simulator - shell, router, storage. Loads LAST; other modules
    must guard shared sub-objects (NP.screens etc.) at load time. */
 (function () {
   "use strict";
@@ -109,8 +109,8 @@
 
   NP.chrome = function (sub) {
     const bar = NP.el("div", { class: "topbar" },
-      NP.el("div", { class: "brand" }, "CompTIA Network+ (N10-009) — Exam Simulator",
-        NP.el("small", null, sub || "Practice simulator — not affiliated with CompTIA")),
+      NP.el("div", { class: "brand" }, "CompTIA Network+ (N10-009), Exam Simulator",
+        NP.el("small", null, sub || "Practice simulator, not affiliated with CompTIA")),
       NP.el("div", { class: "meta" },
         NP.el("button", { class: "tbtn", onclick: () => NP.show(NP.screens.home) }, "Home")));
     const stage = NP.el("div", { class: "stage" });
@@ -127,16 +127,16 @@
     const { bar, stage, inner } = NP.chrome();
     root.appendChild(bar); root.appendChild(stage);
 
-    inner.appendChild(NP.el("h1", { class: "screen-title" }, "CompTIA Network+ N10-009 — Exam Simulator"));
+    inner.appendChild(NP.el("h1", { class: "screen-title" }, "CompTIA Network+ N10-009, Exam Simulator"));
     inner.appendChild(NP.el("p", { class: "screen-sub" },
-      "Full 75-question timed mocks with performance-based questions, Pearson-style interface, and 100–900 scoring — plus a tutor mode to learn before you test. Runs entirely in your browser."));
+      "Full 75-question timed mocks with performance-based questions, Pearson-style interface, and 100–900 scoring: plus a tutor mode to learn before you test. Runs entirely in your browser."));
 
     const ip = Store.data.inprogress;
     if (ip) {
       const card = NP.el("div", { class: "card" });
       card.appendChild(NP.el("h3", null, "Exam in progress"));
       card.appendChild(NP.el("p", null,
-        `Unfinished mock from ${new Date(ip.startedAt).toLocaleString()} — ` +
+        `Unfinished mock from ${new Date(ip.startedAt).toLocaleString()}: ` +
         `${NP.fmtTime(ip.remaining)} remaining. The clock only runs while the exam is open.`));
       const row = NP.el("div", { class: "btnrow" });
       row.appendChild(NP.el("button", { class: "bigbtn", onclick: () => NP.exam.resume() }, "Resume exam"));
@@ -158,19 +158,19 @@
 
     const cpct = NP.course ? NP.course.percentComplete() : 0;
     const cdone = NP.course ? NP.course.courseComplete() : false;
-    tile("📘", "Study Course" + (cpct > 0 ? ` — ${cpct}% complete` : ""),
+    tile("📘", "Study Course" + (cpct > 0 ? `: ${cpct}% complete` : ""),
       cdone
-        ? "Course complete. Every module and checkpoint passed — you're ready for the mock exam."
+        ? "Course complete. Every module and checkpoint passed. You're ready for the mock exam."
         : "20 modules from first principles to exam-ready, each with a quiz you must pass to continue, plus a cumulative checkpoint at the end of every unit.",
       () => NP.show(NP.screens.course));
 
     tile(cdone ? "🖥️" : "🔒", "Take a Full Mock Exam",
       cdone
-        ? "Course complete — you've earned it. 75 questions, 90 minutes, PBQs first, domain-weighted like the real N10-009, with the 720 passing line."
+        ? "Course complete: you've earned it. 75 questions, 90 minutes, PBQs first, domain-weighted like the real N10-009, with the 720 passing line."
         : `Unlocks when the study course is complete (${cpct}% done). 75 questions, 90 minutes, PBQs first, scored against the 720 passing line.`,
       () => NP.exam.startIntro());
     tile("🎓", "Tutor Mode",
-      "Untimed practice by domain, difficulty, and type with instant feedback and full explanations — including PBQs.",
+      "Untimed practice by domain, difficulty, and type with instant feedback and full explanations, including PBQs.",
       () => NP.show(NP.screens.tutor));
     tile("📚", "Study Sheets",
       "The three things every candidate drills: common ports & protocols, the OSI model, and the CompTIA troubleshooting methodology.",
@@ -204,7 +204,7 @@
     at.slice().reverse().forEach((a, ri) => {
       const i = at.length - 1 - ri;
       const row = NP.el("div", { class: "attempt-row" });
-      row.appendChild(NP.el("div", null, NP.el("strong", null, `Attempt ${i + 1}`), ` — ${new Date(a.date).toLocaleString()}`));
+      row.appendChild(NP.el("div", null, NP.el("strong", null, `Attempt ${i + 1}`), `: ${new Date(a.date).toLocaleString()}`));
       row.appendChild(NP.el("div", null,
         NP.el("strong", { style: "color:" + (a.pass ? "var(--good)" : "var(--bad)") }, a.pass ? "PASS" : "FAIL"),
         ` · ${a.scaled}/900`));
@@ -219,7 +219,7 @@
     inner.appendChild(NP.el("h1", { class: "screen-title" }, "Missed Questions Deck"));
     const ids = Store.data.missed.filter(id => NP.byId[id]);
     if (!ids.length) {
-      inner.appendChild(NP.el("p", { class: "screen-sub" }, "Nothing here yet — misses from mocks and tutor mode land here automatically."));
+      inner.appendChild(NP.el("p", { class: "screen-sub" }, "Nothing here yet, misses from mocks and tutor mode land here automatically."));
       return;
     }
     inner.appendChild(NP.el("p", { class: "screen-sub" },
@@ -262,7 +262,7 @@
         <tr><th>Port</th><th>Protocol</th><th>Use</th></tr>
         <tr><td>20/21</td><td>FTP (TCP)</td><td>File transfer (20 data, 21 control)</td></tr>
         <tr><td>22</td><td>SSH / SFTP (TCP)</td><td>Secure remote shell & file transfer</td></tr>
-        <tr><td>23</td><td>Telnet (TCP)</td><td>Insecure remote shell — avoid</td></tr>
+        <tr><td>23</td><td>Telnet (TCP)</td><td>Insecure remote shell: avoid</td></tr>
         <tr><td>25</td><td>SMTP (TCP)</td><td>Mail transfer between servers</td></tr>
         <tr><td>53</td><td>DNS (UDP/TCP)</td><td>Name resolution (TCP for zone transfers)</td></tr>
         <tr><td>67/68</td><td>DHCP (UDP)</td><td>Address assignment (67 server, 68 client)</td></tr>
@@ -302,9 +302,9 @@
     const ts = NP.el("div", { class: "card" });
     ts.innerHTML = `<h3>CompTIA troubleshooting methodology (know the order)</h3>
       <ol style="font-size:14.5px;line-height:1.7">
-        <li><b>Identify the problem</b> — gather information, question users, determine what changed, duplicate if possible.</li>
-        <li><b>Establish a theory of probable cause</b> — question the obvious; consider multiple approaches (top-down/bottom-up OSI).</li>
-        <li><b>Test the theory</b> — if confirmed, plan next steps; if not, establish a new theory or escalate.</li>
+        <li><b>Identify the problem</b>: gather information, question users, determine what changed, duplicate if possible.</li>
+        <li><b>Establish a theory of probable cause</b>: question the obvious; consider multiple approaches (top-down/bottom-up OSI).</li>
+        <li><b>Test the theory</b>, if confirmed, plan next steps; if not, establish a new theory or escalate.</li>
         <li><b>Establish a plan of action</b> and identify potential effects.</li>
         <li><b>Implement the solution</b> or escalate as necessary.</li>
         <li><b>Verify full system functionality</b> and, if applicable, implement preventive measures.</li>

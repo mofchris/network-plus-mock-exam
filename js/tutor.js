@@ -60,7 +60,7 @@
     NP.show(root => {
       const el = NP.el;
       root.appendChild(el("div", { class: "topbar" },
-        el("div", { class: "brand" }, opts.deck ? "Missed Questions Drill" : "Tutor Mode — Practice",
+        el("div", { class: "brand" }, opts.deck ? "Missed Questions Drill" : "Tutor Mode, Practice",
           el("small", null, "Untimed · instant feedback")),
         el("div", { class: "meta" },
           el("button", { class: "tbtn", onclick: () => summary() }, "End session"))));
@@ -74,7 +74,7 @@
         inner.appendChild(el("h2", { class: "screen-title" }, "Session summary"));
         inner.appendChild(el("p", { class: "screen-sub" },
           `${fullCorrect} fully correct out of ${i + (submitted ? 1 : 0)} answered` +
-          (opts.deck ? " — fully-correct answers left the missed deck." : ".")));
+          (opts.deck ? ": fully-correct answers left the missed deck." : ".")));
         const row = el("div", { class: "btnrow" });
         row.appendChild(el("button", { class: "bigbtn", onclick: () => NP.show(NP.screens.tutor) }, "Back to Tutor Mode"));
         row.appendChild(el("button", { class: "bigbtn secondary", onclick: () => NP.show(NP.screens.home) }, "Home"));
@@ -113,7 +113,7 @@
         const submitBtn = el("button", { class: "bigbtn", onclick: () => {
           if (submitted) return;
           if (!NP.isAnsweredAny(q, ans) && !(NP.isPBQ(q) && NP.pbq.isPartial(q, ans))) {
-            NP.modal("No answer", "<p>Answer the question first — on the real exam you'd never leave one blank.</p>");
+            NP.modal("No answer", "<p>Answer the question first, on the real exam you'd never leave one blank.</p>");
             return;
           }
           submitted = true;
@@ -126,7 +126,7 @@
           paintBody();
           fb.innerHTML = "";
           const cls = g.all ? "good" : g.partial ? "part" : "bad";
-          const txt = g.all ? "✔ Correct" : g.partial ? `◐ Partial credit — ${g.pts} of ${g.max} items` : "✘ Incorrect";
+          const txt = g.all ? "✔ Correct" : g.partial ? `◐ Partial credit: ${g.pts} of ${g.max} items` : "✘ Incorrect";
           fb.appendChild(el("div", { class: "feedback-banner " + cls }, txt));
           const ex = el("div", { class: "expl" });
           ex.innerHTML = "<strong>Explanation.</strong> " + q.expl +

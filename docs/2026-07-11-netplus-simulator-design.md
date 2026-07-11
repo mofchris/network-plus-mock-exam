@@ -1,15 +1,15 @@
-# CompTIA Network+ (N10-009) Exam Simulator — Design Spec
+# CompTIA Network+ (N10-009) Exam Simulator: Design Spec
 
 Date: 2026-07-11. Status: approved (own repo, full feature parity with the GRE simulator).
 
 ## Goal
 
-A fully offline, zero-dependency web simulator of the CompTIA Network+ N10-009 exam —
+A fully offline, zero-dependency web simulator of the CompTIA Network+ N10-009 exam: 
 Pearson VUE-style interface, realistic question style/difficulty, performance-based
-questions with partial credit — plus a tutor mode, study sheets, missed-question deck,
+questions with partial credit: plus a tutor mode, study sheets, missed-question deck,
 and score history.
 
-## Exam structure (one linear session — the real exam is NOT adaptive)
+## Exam structure (one linear session. The real exam is NOT adaptive)
 
 - 75 questions, 90 minutes, free navigation with Flag for Review.
 - ~4 PBQs delivered first, then ~71 multiple-choice (single and "Select TWO").
@@ -39,7 +39,7 @@ ordering/security, cable/connector selection).
 ## Scoring & results
 
 - Points: MC = 1; PBQ = one point per sub-item (partial credit).
-- Scaled = 100 + round(800 × points/maxPoints); PASS at ≥ 720 (CompTIA scale) — an
+- Scaled = 100 + round(800 × points/maxPoints); PASS at ≥ 720 (CompTIA scale): an
   approximation of CompTIA's unpublished equating, labeled as such.
 - Report: PASS/FAIL banner, scaled score, per-domain accuracy vs official weights,
   PBQ item detail, pacing, full review with explanations, attempt history + trend.

@@ -1,10 +1,10 @@
-/* Network+ Study Course — Unit 4: Operations & Security */
+/* Network+ Study Course - Unit 4: Operations & Security */
 (function () {
   const C = window.NETCOURSE = window.NETCOURSE || { units: [] };
 
   C.units.push({
     id: "u4",
-    title: "Unit 4 — Operations and Security",
+    title: "Unit 4: Operations and Security",
     blurb: "Keeping the network alive and defended: monitoring, availability, documentation, and the attacks you must recognize and stop.",
     modules: [
 
@@ -13,38 +13,38 @@
   id: "m4_1", title: "Monitoring, Baselines, and Documentation", minutes: 13, level: "core",
   content: `
 <p>You cannot manage what you cannot see. Operations is the discipline of knowing what "normal" looks
-like — so that "abnormal" announces itself instead of hiding until users start calling.</p>
+like, so that "abnormal" announces itself instead of hiding until users start calling.</p>
 
 <h2>The three data sources</h2>
 <table>
   <tr><th>Tool</th><th>Answers</th><th>Port</th></tr>
-  <tr><td><strong>SNMP</strong></td><td>"How is this device doing?" — CPU, memory, interface counters</td><td>UDP 161 (polls), 162 (traps)</td></tr>
-  <tr><td><strong>Syslog</strong></td><td>"What happened, and when?" — events and errors</td><td>UDP 514</td></tr>
-  <tr><td><strong>NetFlow / sFlow / IPFIX</strong></td><td>"Who is talking to whom, and how much?" — top talkers</td><td>Varies</td></tr>
+  <tr><td><strong>SNMP</strong></td><td>"How is this device doing?": CPU, memory, interface counters</td><td>UDP 161 (polls), 162 (traps)</td></tr>
+  <tr><td><strong>Syslog</strong></td><td>"What happened, and when?": events and errors</td><td>UDP 514</td></tr>
+  <tr><td><strong>NetFlow / sFlow / IPFIX</strong></td><td>"Who is talking to whom, and how much?": top talkers</td><td>Varies</td></tr>
 </table>
 <p><strong>SNMP</strong> uses a manager/agent model. The manager <em>polls</em> agents (Get) for values
 identified by OIDs in a MIB; agents send unsolicited <strong>traps</strong> when something breaks.</p>
 <div class="exambox"><strong>SNMPv3 is the only acceptable answer for secure monitoring.</strong> v1 and
-v2c use clear-text community strings — effectively a password sent in the open. v3 adds authentication
+v2c use clear-text community strings, effectively a password sent in the open. v3 adds authentication
 and encryption.</div>
 <p><strong>Syslog severity</strong> runs 0 (Emergency) to 7 (Debug). <em>Lower number = more severe.</em>
 Setting a device to level 7 in production will drown you.</p>
 
 <h2>Baselines: the concept that makes alerts meaningful</h2>
-<p>A <strong>baseline</strong> is a record of normal performance over a representative period — CPU,
+<p>A <strong>baseline</strong> is a record of normal performance over a representative period: CPU,
 memory, interface utilization, latency. Without it, "CPU is at 60%" means nothing. With it, you know
 60% is either routine or a five-fold spike.</p>
 <p>Thresholds should come from the baseline. Alert on <em>deviation</em>, not on arbitrary round numbers,
-or you'll tune out the alerts entirely — the real-world failure mode of every monitoring project.</p>
+or you'll tune out the alerts entirely: the real-world failure mode of every monitoring project.</p>
 
 <h2>Documentation that actually gets used</h2>
 <ul>
-  <li><strong>Physical diagram</strong> — racks, ports, cable runs. Where things <em>are</em>.</li>
-  <li><strong>Logical diagram</strong> — VLANs, subnets, routing, traffic flow. How things <em>work</em>.</li>
-  <li><strong>IPAM</strong> (IP Address Management) — every subnet, its VLAN, and which device holds which address. Prevents duplicate-IP outages.</li>
-  <li><strong>Asset inventory</strong> — model, serial, warranty, and end-of-life/end-of-support dates. Drives replacement budgeting.</li>
-  <li><strong>Runbook</strong> — step-by-step procedures for routine and emergency operations, so the outcome doesn't depend on who is on call at 3 a.m.</li>
-  <li><strong>Configuration backups</strong> — because a dead switch with no saved config is a very long night.</li>
+  <li><strong>Physical diagram</strong>: racks, ports, cable runs. Where things <em>are</em>.</li>
+  <li><strong>Logical diagram</strong>: VLANs, subnets, routing, traffic flow. How things <em>work</em>.</li>
+  <li><strong>IPAM</strong> (IP Address Management): every subnet, its VLAN, and which device holds which address. Prevents duplicate-IP outages.</li>
+  <li><strong>Asset inventory</strong>: model, serial, warranty, and end-of-life/end-of-support dates. Drives replacement budgeting.</li>
+  <li><strong>Runbook</strong>: step-by-step procedures for routine and emergency operations, so the outcome doesn't depend on who is on call at 3 a.m.</li>
+  <li><strong>Configuration backups</strong>, because a dead switch with no saved config is a very long night.</li>
 </ul>
 <div class="warnbox"><strong>Never store default or plaintext passwords in documentation.</strong> It's a
 tempting shortcut and it's a security failure. Exam questions include it as a distractor.</div>
@@ -52,10 +52,10 @@ tempting shortcut and it's a security failure. Exam questions include it as a di
 <h2>Change management</h2>
 <p>The process exists because unreviewed changes cause more outages than hardware failures do.</p>
 <ol>
-  <li><strong>Request</strong> — what, why, and who is affected.</li>
+  <li><strong>Request</strong>: what, why, and who is affected.</li>
   <li><strong>Assess impact and risk</strong>, then get <strong>approval</strong>.</li>
   <li><strong>Schedule</strong> a maintenance window and notify stakeholders.</li>
-  <li><strong>Prepare a rollback (backout) plan</strong> — the step people skip and later regret.</li>
+  <li><strong>Prepare a rollback (backout) plan</strong>: the step people skip and later regret.</li>
   <li><strong>Implement</strong>, then <strong>verify</strong>.</li>
   <li><strong>Document</strong> what actually happened.</li>
 </ol>
@@ -63,18 +63,18 @@ tempting shortcut and it's a security failure. Exam questions include it as a di
 <h2>Agreements you'll be asked about</h2>
 <table>
   <tr><th>Acronym</th><th>Meaning</th></tr>
-  <tr><td><strong>SLA</strong></td><td>Service Level Agreement — measurable commitments (uptime %, response times) and remedies</td></tr>
-  <tr><td><strong>MOU</strong></td><td>Memorandum of Understanding — a non-binding statement of intent</td></tr>
-  <tr><td><strong>SOW</strong></td><td>Statement of Work — the specific deliverables of a project</td></tr>
-  <tr><td><strong>NDA</strong></td><td>Non-Disclosure Agreement — confidentiality</td></tr>
-  <tr><td><strong>AUP</strong></td><td>Acceptable Use Policy — the rules users must follow on company systems</td></tr>
+  <tr><td><strong>SLA</strong></td><td>Service Level Agreement: measurable commitments (uptime %, response times) and remedies</td></tr>
+  <tr><td><strong>MOU</strong></td><td>Memorandum of Understanding: a non-binding statement of intent</td></tr>
+  <tr><td><strong>SOW</strong></td><td>Statement of Work: the specific deliverables of a project</td></tr>
+  <tr><td><strong>NDA</strong></td><td>Non-Disclosure Agreement: confidentiality</td></tr>
+  <tr><td><strong>AUP</strong></td><td>Acceptable Use Policy: the rules users must follow on company systems</td></tr>
 </table>
 
 <h2>Other operational features</h2>
 <ul>
-  <li><strong>Port mirroring (SPAN)</strong> — copies traffic to a monitoring port for a protocol analyzer. A physical <strong>TAP</strong> does the same passively, without loading the switch.</li>
-  <li><strong>Out-of-band management</strong> — a separate path (console server, dedicated port, cellular) to reach devices <em>when the production network is down</em>. Which is precisely when you need it.</li>
-  <li><strong>Jump box</strong> — a hardened, monitored host that admins connect through to reach sensitive segments.</li>
+  <li><strong>Port mirroring (SPAN)</strong>: copies traffic to a monitoring port for a protocol analyzer. A physical <strong>TAP</strong> does the same passively, without loading the switch.</li>
+  <li><strong>Out-of-band management</strong>: a separate path (console server, dedicated port, cellular) to reach devices <em>when the production network is down</em>. Which is precisely when you need it.</li>
+  <li><strong>Jump box</strong>: a hardened, monitored host that admins connect through to reach sensitive segments.</li>
 </ul>
 
 <h2>What you must remember</h2>
@@ -87,7 +87,7 @@ tempting shortcut and it's a security failure. Exam questions include it as a di
   quiz: [
     { text: "Which tool would you use to identify which hosts are consuming the most bandwidth?",
       choices: ["Syslog", "NetFlow", "NTP", "LDAP"], answer: 1,
-      expl: "Flow technologies such as NetFlow, sFlow, and IPFIX export records of conversations with byte counts — exactly what 'top talkers' analysis requires." },
+      expl: "Flow technologies such as NetFlow, sFlow, and IPFIX export records of conversations with byte counts, exactly what 'top talkers' analysis requires." },
     { text: "Which version of SNMP provides authentication and encryption?",
       choices: ["SNMPv1", "SNMPv2c", "SNMPv3", "All versions"], answer: 2,
       expl: "SNMPv3 adds user-based authentication and encryption. v1 and v2c rely on clear-text community strings." },
@@ -118,7 +118,7 @@ tempting shortcut and it's a security failure. Exam questions include it as a di
         "It encrypts all user traffic",
         "It replaces the need for backups"],
       answer: [0, 2],
-      expl: "Out-of-band management uses a separate path — console servers, dedicated ports, or cellular — so administrators can reach devices during an outage." },
+      expl: "Out-of-band management uses a separate path (console servers, dedicated ports, or cellular) so administrators can reach devices during an outage." },
     { text: "Which syslog severity level is the most severe?",
       choices: ["0 (Emergency)", "3 (Error)", "6 (Informational)", "7 (Debug)"], answer: 0,
       expl: "Syslog severity runs from 0 (Emergency, most severe) to 7 (Debug, least severe). Lower is worse." },
@@ -143,13 +143,13 @@ find every single point of failure and eliminate it, then prove you can recover 
 <h2>The metrics</h2>
 <table>
   <tr><th>Metric</th><th>Question it answers</th></tr>
-  <tr><td><strong>RPO</strong> — Recovery Point Objective</td><td>How much <em>data</em> can we afford to lose? (Sets backup frequency.)</td></tr>
-  <tr><td><strong>RTO</strong> — Recovery Time Objective</td><td>How fast must we be back up? (Sets recovery design.)</td></tr>
-  <tr><td><strong>MTTR</strong> — Mean Time To Repair</td><td>How long does a fix typically take?</td></tr>
-  <tr><td><strong>MTBF</strong> — Mean Time Between Failures</td><td>How reliable is this component?</td></tr>
+  <tr><td><strong>RPO</strong>: Recovery Point Objective</td><td>How much <em>data</em> can we afford to lose? (Sets backup frequency.)</td></tr>
+  <tr><td><strong>RTO</strong>: Recovery Time Objective</td><td>How fast must we be back up? (Sets recovery design.)</td></tr>
+  <tr><td><strong>MTTR</strong>: Mean Time To Repair</td><td>How long does a fix typically take?</td></tr>
+  <tr><td><strong>MTBF</strong>: Mean Time Between Failures</td><td>How reliable is this component?</td></tr>
 </table>
 <div class="keybox"><strong>RPO = data. RTO = time.</strong> An RPO of 1 hour means hourly backups. An RTO of
-4 hours means your recovery process must complete within 4 hours. They are independent — and both are
+4 hours means your recovery process must complete within 4 hours. They are independent, and both are
 business decisions, not technical ones.</div>
 
 <h2>The nines</h2>
@@ -179,15 +179,15 @@ business decisions, not technical ones.</div>
 </table>
 <p>The <strong>3-2-1 rule</strong>: three copies, on two different media types, with one copy offsite.</p>
 <div class="warnbox"><strong>An untested backup is a hypothesis, not a backup.</strong> Restore tests are the
-only proof. Backups stored on the same SAN as production fail together with production — which is not a
+only proof. Backups stored on the same SAN as production fail together with production, which is not a
 backup strategy, it's a coincidence.</div>
 
 <h2>Power and environment</h2>
 <ul>
-  <li><strong>UPS</strong> — battery power that bridges short outages and conditions dirty power. Buys you minutes.</li>
-  <li><strong>Generator</strong> — sustains long outages, but takes time to start. The UPS covers that gap.</li>
-  <li><strong>PDU</strong> — distributes power within the rack; managed PDUs allow remote power cycling.</li>
-  <li><strong>Hot aisle / cold aisle</strong> — arrange racks so intake air and exhaust air never mix.</li>
+  <li><strong>UPS</strong>: battery power that bridges short outages and conditions dirty power. Buys you minutes.</li>
+  <li><strong>Generator</strong>: sustains long outages, but takes time to start. The UPS covers that gap.</li>
+  <li><strong>PDU</strong>: distributes power within the rack; managed PDUs allow remote power cycling.</li>
+  <li><strong>Hot aisle / cold aisle</strong>: arrange racks so intake air and exhaust air never mix.</li>
   <li>Monitor <strong>temperature and humidity</strong>: too dry invites static discharge; too humid invites condensation and corrosion.</li>
 </ul>
 
@@ -195,7 +195,7 @@ backup strategy, it's a coincidence.</div>
 <p>Ask of every element: "if this dies, what happens?" Then remove the single points of failure:</p>
 <ul>
   <li>Redundant <strong>devices</strong> (two core switches, an FHRP for the gateway).</li>
-  <li>Redundant, <strong>physically diverse paths</strong> — two fibers in the same conduit die to the same backhoe.</li>
+  <li>Redundant, <strong>physically diverse paths</strong>, two fibers in the same conduit die to the same backhoe.</li>
   <li>Redundant <strong>power</strong> (dual supplies on separate circuits) and <strong>ISPs</strong>.</li>
   <li><strong>Load balancing</strong> and clustering for services.</li>
 </ul>
@@ -239,7 +239,7 @@ backup strategy, it's a coincidence.</div>
       expl: "A UPS provides immediate battery power for short outages and covers the delay while a generator starts up for sustained outages." },
     { text: "Two fiber runs between buildings follow the same conduit. What risk does this introduce?",
       choices: [
-        "They are not truly diverse — a single physical incident can sever both",
+        "They are not truly diverse. A single physical incident can sever both",
         "They will interfere with each other electrically",
         "They cannot be aggregated",
         "They will overheat"],
@@ -265,18 +265,18 @@ single failure doesn't become a breach.</p>
 
 <h2>The CIA triad</h2>
 <ul>
-  <li><strong>Confidentiality</strong> — only authorized parties can read the data. (Encryption.)</li>
-  <li><strong>Integrity</strong> — the data hasn't been altered. (Hashing, digital signatures.)</li>
-  <li><strong>Availability</strong> — authorized users can actually get to it. (Redundancy, DDoS protection.)</li>
+  <li><strong>Confidentiality</strong>, only authorized parties can read the data. (Encryption.)</li>
+  <li><strong>Integrity</strong>: the data hasn't been altered. (Hashing, digital signatures.)</li>
+  <li><strong>Availability</strong>: authorized users can actually get to it. (Redundancy, DDoS protection.)</li>
 </ul>
 <div class="keybox"><strong>Match the control to the goal:</strong> encryption → confidentiality.
 Hashing → integrity. Redundancy → availability. Exam questions often describe a goal and ask for the control.</div>
 
 <h2>AAA</h2>
 <ul>
-  <li><strong>Authentication</strong> — who are you? (Password, token, biometric.)</li>
-  <li><strong>Authorization</strong> — what may you do? (Permissions, role-based access.)</li>
-  <li><strong>Accounting</strong> — what did you do? (Logs, audit trails.)</li>
+  <li><strong>Authentication</strong>, who are you? (Password, token, biometric.)</li>
+  <li><strong>Authorization</strong>: what may you do? (Permissions, role-based access.)</li>
+  <li><strong>Accounting</strong>: what did you do? (Logs, audit trails.)</li>
 </ul>
 <p><strong>RADIUS</strong> is typically used for network access (802.1X, VPN); <strong>TACACS+</strong> for
 device administration, with finer-grained command authorization.</p>
@@ -290,24 +290,24 @@ device administration, with finer-grained command authorization.</p>
   <tr><td>Somewhere you <strong>are</strong></td><td>Geolocation</td></tr>
 </table>
 <div class="warnbox"><strong>Multifactor requires different categories.</strong> A password plus a PIN is
-still single-factor — both are "something you know." This is a favorite trap.</div>
+still single-factor. Both are "something you know." This is a favorite trap.</div>
 
 <h2>The principles</h2>
 <ul>
-  <li><strong>Least privilege</strong> — grant only the access the role requires. Limits the blast radius of any compromised account.</li>
-  <li><strong>Defense in depth</strong> — layer controls so one failure isn't fatal. Firewall <em>and</em> segmentation <em>and</em> endpoint protection <em>and</em> monitoring.</li>
-  <li><strong>Separation of duties</strong> — no single person controls an entire sensitive process.</li>
-  <li><strong>Zero trust</strong> — no implicit trust based on location. Verify every request explicitly, assume breach, enforce least privilege everywhere.</li>
+  <li><strong>Least privilege</strong>: grant only the access the role requires. Limits the blast radius of any compromised account.</li>
+  <li><strong>Defense in depth</strong>: layer controls so one failure isn't fatal. Firewall <em>and</em> segmentation <em>and</em> endpoint protection <em>and</em> monitoring.</li>
+  <li><strong>Separation of duties</strong>, no single person controls an entire sensitive process.</li>
+  <li><strong>Zero trust</strong>, no implicit trust based on location. Verify every request explicitly, assume breach, enforce least privilege everywhere.</li>
 </ul>
 
-<h2>Segmentation — the highest-leverage control</h2>
+<h2>Segmentation: the highest-leverage control</h2>
 <p>A flat network means one infected laptop can reach the database server directly. Segmentation
-(VLANs, subnets, firewall zones, microsegmentation) constrains <strong>lateral movement</strong> — the
+(VLANs, subnets, firewall zones, microsegmentation) constrains <strong>lateral movement</strong>: the
 attacker gets in, but can't go anywhere.</p>
 <ul>
-  <li><strong>Screened subnet (DMZ)</strong> — internet-facing services isolated from the internal LAN.</li>
-  <li><strong>Guest network</strong> — internet-only, segmented, with client isolation.</li>
-  <li><strong>Microsegmentation</strong> — policy applied per workload, not per subnet.</li>
+  <li><strong>Screened subnet (DMZ)</strong>: internet-facing services isolated from the internal LAN.</li>
+  <li><strong>Guest network</strong>: internet-only, segmented, with client isolation.</li>
+  <li><strong>Microsegmentation</strong>: policy applied per workload, not per subnet.</li>
 </ul>
 <div class="exambox"><strong>Exam angle:</strong> "Limit lateral movement" and "contain the breach" both
 have the same answer: <strong>segmentation</strong>.</div>
@@ -322,17 +322,17 @@ have the same answer: <strong>segmentation</strong>.</div>
   <li>Apply port security and 802.1X where feasible.</li>
 </ol>
 
-<h2>NAC — Network Access Control</h2>
+<h2>NAC: Network Access Control</h2>
 <p>NAC checks a device's <strong>posture</strong> before letting it on: is it patched, is antivirus running,
 is it a corporate asset? Non-compliant devices are quarantined into a remediation VLAN. It pairs naturally
 with 802.1X.</p>
 
 <h2>Cryptography, briefly</h2>
 <ul>
-  <li><strong>Encryption</strong> → confidentiality. Symmetric (AES — fast, one shared key) vs asymmetric (RSA — public/private key pair, used to exchange the symmetric key).</li>
+  <li><strong>Encryption</strong> → confidentiality. Symmetric (AES (fast, one shared key) vs asymmetric (RSA) public/private key pair, used to exchange the symmetric key).</li>
   <li><strong>Hashing</strong> (SHA-256) → integrity. One-way; matching digests prove nothing was altered.</li>
   <li><strong>Digital signature</strong> → integrity + authenticity + non-repudiation. Hash it, then encrypt the hash with your private key.</li>
-  <li><strong>PKI / certificates</strong> → a trusted Certificate Authority vouches for a public key. This is what makes HTTPS trustworthy — and why clicking through certificate warnings is dangerous.</li>
+  <li><strong>PKI / certificates</strong> → a trusted Certificate Authority vouches for a public key. This is what makes HTTPS trustworthy, and why clicking through certificate warnings is dangerous.</li>
 </ul>
 
 <h2>What you must remember</h2>
@@ -348,9 +348,9 @@ with 802.1X.</p>
       expl: "Hashing produces a digest that changes if the data changes, proving integrity. Encryption provides confidentiality; redundancy supports availability." },
     { text: "A user logs in with a password and a PIN. Is this multifactor authentication?",
       choices: [
-        "Yes — two credentials were used",
-        "No — both are 'something you know', so it is single-factor",
-        "Yes — a PIN is 'something you have'",
+        "Yes, two credentials were used",
+        "No. Both are 'something you know', so it is single-factor",
+        "Yes. A PIN is 'something you have'",
         "Only if the PIN is longer than the password"],
       answer: 1,
       expl: "Multifactor requires factors from different categories. A password and a PIN are both knowledge factors, so this remains single-factor authentication." },
@@ -374,7 +374,7 @@ with 802.1X.</p>
       expl: "Default credentials are the most exploited weakness, and unused ports and services expand the attack surface. Telnet and SNMPv1 send data in clear text and should be disabled." },
     { text: "What does NAC evaluate before permitting a device onto the network?",
       choices: [
-        "The device's posture — patch level, antivirus status, and compliance",
+        "The device's posture: patch level, antivirus status, and compliance",
         "The device's MAC address only",
         "The user's typing speed",
         "The switch's PoE budget"],
@@ -390,36 +390,36 @@ with 802.1X.</p>
 {
   id: "m4_4", title: "Attacks and Their Mitigations", minutes: 14, level: "advanced",
   content: `
-<p>The exam doesn't just want attack names — it wants the <em>fix</em>. Learn these as pairs.</p>
+<p>The exam doesn't just want attack names: it wants the <em>fix</em>. Learn these as pairs.</p>
 
 <h2>Layer 2 attacks (and their exact countermeasures)</h2>
 <table>
   <tr><th>Attack</th><th>How it works</th><th>Mitigation</th></tr>
   <tr><td><strong>ARP spoofing / poisoning</strong></td><td>Forged ARP replies map the gateway's IP to the attacker's MAC, putting them on-path (MITM)</td><td><strong>Dynamic ARP Inspection (DAI)</strong>, backed by DHCP snooping</td></tr>
-  <tr><td><strong>MAC flooding</strong></td><td>Floods the CAM table with fake MACs until the switch fails open and floods frames everywhere ("switch acts like a hub")</td><td><strong>Port security</strong> — limit MACs per port</td></tr>
-  <tr><td><strong>Rogue DHCP server</strong></td><td>Hands out a bogus gateway/DNS, capturing traffic</td><td><strong>DHCP snooping</strong> — only trusted ports may send DHCP offers</td></tr>
+  <tr><td><strong>MAC flooding</strong></td><td>Floods the CAM table with fake MACs until the switch fails open and floods frames everywhere ("switch acts like a hub")</td><td><strong>Port security</strong>: limit MACs per port</td></tr>
+  <tr><td><strong>Rogue DHCP server</strong></td><td>Hands out a bogus gateway/DNS, capturing traffic</td><td><strong>DHCP snooping</strong>, only trusted ports may send DHCP offers</td></tr>
   <tr><td><strong>VLAN hopping (double-tagging)</strong></td><td>Two 802.1Q tags; the first switch strips the outer one and forwards into another VLAN</td><td>Change the <strong>native VLAN</strong> to an unused one; disable auto-trunking (DTP)</td></tr>
   <tr><td><strong>STP manipulation</strong></td><td>A rogue switch claims to be root and reroutes traffic through itself</td><td><strong>BPDU Guard</strong> and <strong>Root Guard</strong></td></tr>
 </table>
-<div class="exambox"><strong>DHCP snooping is the prerequisite for DAI</strong> — snooping builds the
+<div class="exambox"><strong>DHCP snooping is the prerequisite for DAI</strong>: snooping builds the
 IP-to-MAC binding table that DAI checks ARP replies against. They're tested together constantly.</div>
 
 <h2>Denial of service</h2>
 <ul>
-  <li><strong>DoS</strong> — one source overwhelms a target. <strong>DDoS</strong> — a botnet of many compromised hosts does it.</li>
-  <li><strong>Amplification / reflection</strong> — the attacker sends small spoofed requests to open DNS or NTP servers, which send huge replies to the victim. A small attacker generates enormous traffic.</li>
-  <li>Mitigation: upstream scrubbing services, rate limiting, anycast distribution, and — importantly — <em>not running open resolvers</em>.</li>
+  <li><strong>DoS</strong>, one source overwhelms a target. <strong>DDoS</strong>: a botnet of many compromised hosts does it.</li>
+  <li><strong>Amplification / reflection</strong>: the attacker sends small spoofed requests to open DNS or NTP servers, which send huge replies to the victim. A small attacker generates enormous traffic.</li>
+  <li>Mitigation: upstream scrubbing services, rate limiting, anycast distribution, and (importantly) <em>not running open resolvers</em>.</li>
 </ul>
 
 <h2>Wireless attacks</h2>
 <ul>
-  <li><strong>Evil twin</strong> — a rogue AP broadcasting your SSID to harvest credentials. Mitigation: 802.1X with mutual authentication (the client validates the server's certificate), WIPS, user training.</li>
-  <li><strong>Deauthentication attack</strong> — forcibly disconnects clients, often to push them onto the evil twin. Mitigation: 802.11w management frame protection.</li>
-  <li><strong>Rogue AP</strong> — an unauthorized AP plugged into your network (sometimes by a well-meaning employee). Mitigation: wireless scanning, NAC, port security.</li>
-  <li><strong>War driving</strong> — driving around mapping wireless networks.</li>
+  <li><strong>Evil twin</strong>: a rogue AP broadcasting your SSID to harvest credentials. Mitigation: 802.1X with mutual authentication (the client validates the server's certificate), WIPS, user training.</li>
+  <li><strong>Deauthentication attack</strong>: forcibly disconnects clients, often to push them onto the evil twin. Mitigation: 802.11w management frame protection.</li>
+  <li><strong>Rogue AP</strong>: an unauthorized AP plugged into your network (sometimes by a well-meaning employee). Mitigation: wireless scanning, NAC, port security.</li>
+  <li><strong>War driving</strong>: driving around mapping wireless networks.</li>
 </ul>
 
-<h2>Social engineering — the attacks that skip your firewall</h2>
+<h2>Social engineering: the attacks that skip your firewall</h2>
 <table>
   <tr><th>Attack</th><th>Vector</th></tr>
   <tr><td><strong>Phishing</strong></td><td>Mass email</td></tr>
@@ -435,16 +435,16 @@ requests, access control vestibules (mantraps) against tailgating, and shredding
 
 <h2>Other attacks to recognize</h2>
 <ul>
-  <li><strong>On-path (man-in-the-middle)</strong> — the attacker relays and possibly alters traffic. Mitigation: TLS with <em>proper certificate validation</em>, DAI.</li>
-  <li><strong>DNS poisoning</strong> — forged records send users to attacker-controlled sites. The URL is right; the destination is wrong. Mitigation: DNSSEC, trusted resolvers.</li>
-  <li><strong>Zero-day</strong> — exploited before a patch exists. You cannot patch your way out; use compensating controls (IPS signatures, segmentation, disabling the affected feature).</li>
-  <li><strong>Ransomware</strong> — encrypts data and demands payment. Your real defense is <em>tested, offline backups</em> plus segmentation.</li>
-  <li><strong>Insider threat</strong> — a legitimate user abusing access. Mitigation: least privilege, separation of duties, and accounting/audit logs.</li>
+  <li><strong>On-path (man-in-the-middle)</strong>: the attacker relays and possibly alters traffic. Mitigation: TLS with <em>proper certificate validation</em>, DAI.</li>
+  <li><strong>DNS poisoning</strong>: forged records send users to attacker-controlled sites. The URL is right; the destination is wrong. Mitigation: DNSSEC, trusted resolvers.</li>
+  <li><strong>Zero-day</strong>: exploited before a patch exists. You cannot patch your way out; use compensating controls (IPS signatures, segmentation, disabling the affected feature).</li>
+  <li><strong>Ransomware</strong>: encrypts data and demands payment. Your real defense is <em>tested, offline backups</em> plus segmentation.</li>
+  <li><strong>Insider threat</strong>: a legitimate user abusing access. Mitigation: least privilege, separation of duties, and accounting/audit logs.</li>
 </ul>
 
 <h2>Physical controls</h2>
 <ul>
-  <li><strong>Access control vestibule (mantrap)</strong> — one authenticated person at a time. The specific answer for tailgating.</li>
+  <li><strong>Access control vestibule (mantrap)</strong>, one authenticated person at a time. The specific answer for tailgating.</li>
   <li>Badge readers, cameras with logging, locked racks and wiring closets, asset tags.</li>
 </ul>
 
@@ -461,10 +461,10 @@ requests, access control vestibules (mantraps) against tailgating, and shredding
       expl: "DAI validates ARP replies against the DHCP snooping binding table and drops forged ones, defeating ARP poisoning and the on-path attack it enables." },
     { text: "A switch begins flooding all frames out every port after an attacker overwhelms its CAM table. Which attack is this, and what stops it?",
       choices: [
-        "MAC flooding — mitigated by port security",
-        "ARP spoofing — mitigated by DAI",
-        "VLAN hopping — mitigated by changing the native VLAN",
-        "DNS poisoning — mitigated by DNSSEC"],
+        "MAC flooding: mitigated by port security",
+        "ARP spoofing: mitigated by DAI",
+        "VLAN hopping: mitigated by changing the native VLAN",
+        "DNS poisoning: mitigated by DNSSEC"],
       answer: 0,
       expl: "MAC flooding exhausts the CAM table so the switch fails open and floods frames, letting the attacker sniff traffic. Port security limits learned MACs per port." },
     { text: "Which feature prevents a rogue DHCP server from handing out addresses on the network?",
@@ -520,7 +520,7 @@ requests, access control vestibules (mantraps) against tailgating, and shredding
           expl: "Port security caps learned MAC addresses, preventing an attacker from overflowing the CAM table and forcing the switch to flood frames." },
         { text: "Which two are components of the CIA triad? (Select TWO.)",
           choices: ["Confidentiality", "Compliance", "Integrity", "Configuration", "Certification"], answer: [0, 2],
-          expl: "The CIA triad is Confidentiality, Integrity, and Availability — the three goals every security control serves." },
+          expl: "The CIA triad is Confidentiality, Integrity, and Availability, the three goals every security control serves." },
         { text: "A backup strategy stores three copies on two media types with one offsite. What is this called?",
           choices: ["The 3-2-1 rule", "RAID 5", "Differential backup", "Hot site replication"], answer: 0,
           expl: "3-2-1 protects against both media failure and site-wide disaster: three copies, two media types, one offsite." },
@@ -559,7 +559,7 @@ requests, access control vestibules (mantraps) against tailgating, and shredding
             "SNMPv3",
             "Router encryption"],
           answer: [0, 2],
-          expl: "Locks and cameras are physical controls. ACLs, SNMPv3, and encryption are technical controls — important, but they don't stop someone entering the wiring closet." },
+          expl: "Locks and cameras are physical controls. ACLs, SNMPv3, and encryption are technical controls: important, but they don't stop someone entering the wiring closet." },
         { text: "Multifactor authentication requires:",
           choices: [
             "Two credentials from different factor categories",
@@ -567,7 +567,7 @@ requests, access control vestibules (mantraps) against tailgating, and shredding
             "A password of at least 16 characters",
             "Biometrics only"],
           answer: 0,
-          expl: "MFA combines categories — for example something you know plus something you have. Two knowledge factors remain single-factor." },
+          expl: "MFA combines categories, for example something you know plus something you have. Two knowledge factors remain single-factor." },
         { text: "Which prefix would you use for a point-to-point router link?",
           choices: ["/24", "/28", "/30", "/32"], answer: 2,
           expl: "A /30 provides exactly two usable addresses, one per router, with no waste." },
@@ -585,7 +585,7 @@ requests, access control vestibules (mantraps) against tailgating, and shredding
           expl: "DAI blocks forged ARP replies, and TLS with certificate validation ensures the endpoint is authentic. Blindly accepting self-signed certificates enables the attack." },
         { text: "Which principle layers multiple independent controls so that one failure is not fatal?",
           choices: ["Defense in depth", "Least privilege", "Separation of duties", "Single sign-on"], answer: 0,
-          expl: "Defense in depth stacks controls — firewall, segmentation, endpoint protection, monitoring — so that no single failure results in a breach." },
+          expl: "Defense in depth stacks controls (firewall, segmentation, endpoint protection, monitoring) so that no single failure results in a breach." },
         { text: "Which type of site has hardware installed but requires data to be restored before operations resume?",
           choices: ["Cold site", "Warm site", "Hot site", "Mobile site"], answer: 1,
           expl: "A warm site has equipment ready but needs current data restored, placing it between a cold site (empty) and a hot site (ready now)." },
@@ -597,7 +597,7 @@ requests, access control vestibules (mantraps) against tailgating, and shredding
             "They replace the need for monitoring tools",
             "They are only useful for wireless networks"],
           answer: [0, 2],
-          expl: "A baseline defines normal, and thresholds derived from it fire on genuine deviation instead of arbitrary numbers — which is what keeps alerts trustworthy." }
+          expl: "A baseline defines normal, and thresholds derived from it fire on genuine deviation instead of arbitrary numbers, which is what keeps alerts trustworthy." }
       ]
     }
   });

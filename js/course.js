@@ -83,7 +83,7 @@
 
     /* progress bar */
     const pcard = el("div", { class: "card" });
-    pcard.appendChild(el("h3", null, `Course progress — ${pct}%`));
+    pcard.appendChild(el("h3", null, `Course progress: ${pct}%`));
     const track = el("div", { class: "tbar-track", style: "height:22px" });
     track.appendChild(el("div", { class: "tbar-fill", style: `width:${pct}%` }));
     pcard.appendChild(track);
@@ -93,13 +93,13 @@
     if (C.courseComplete()) {
       const row = el("div", { class: "btnrow" });
       row.appendChild(el("button", { class: "bigbtn", onclick: () => NP.exam.startIntro() },
-        "🎓 Course complete — take the mock exam"));
+        "🎓 Course complete: take the mock exam"));
       pcard.appendChild(row);
     } else {
       const next = s[uIdx];
       const row = el("div", { class: "btnrow" });
       row.appendChild(el("button", { class: "bigbtn", onclick: () => open(next) },
-        (pct === 0 ? "Start the course" : "Continue") + " — " + next.item.title));
+        (pct === 0 ? "Start the course" : "Continue") + ", " + next.item.title));
       pcard.appendChild(row);
       pcard.appendChild(el("p", { style: "margin:10px 0 0;font-size:13px;color:#5b6572" },
         "The full mock exam unlocks when every module and checkpoint is passed."));
@@ -152,7 +152,7 @@
     });
 
     inner.appendChild(el("p", { class: "footnote" },
-      "Passing mark is 75%. You can retake any quiz as many times as you like — your best score is kept, and completed modules stay open for review."));
+      "Passing mark is 75%. You can retake any quiz as many times as you like: your best score is kept, and completed modules stay open for review."));
   };
 
   function open(step) {
@@ -251,13 +251,13 @@
         NP.store.save();
 
         inner.appendChild(el("h1", { class: "screen-title" },
-          (isCheckpoint ? "Checkpoint result — " : "Quiz result — ") + owner.title));
+          (isCheckpoint ? "Checkpoint result: " : "Quiz result, ") + owner.title));
         const banner = el("div", { class: "passbanner " + (passed ? "pass" : "fail") },
           el("div", null,
             el("div", { class: "big" }, passed ? "PASSED" : "NOT YET"),
             el("div", { class: "sub" }, passed
-              ? (isCheckpoint ? "Unit cleared — the next unit is unlocked." : "Module complete — the next step is unlocked.")
-              : `You need ${PASS}% to pass. Review the explanations below and retake it — there's no limit.`)),
+              ? (isCheckpoint ? "Unit cleared. The next unit is unlocked." : "Module complete. The next step is unlocked.")
+              : `You need ${PASS}% to pass. Review the explanations below and retake it: there's no limit.`)),
           el("div", { style: "text-align:right" },
             el("div", { class: "big" }, pct + "%"),
             el("div", { class: "sub" }, `${correct} of ${qs.length} correct`)));

@@ -15,7 +15,7 @@
     root.appendChild(bar); root.appendChild(stage);
 
     inner.appendChild(el("h1", { class: "screen-title" },
-      fresh ? "Exam complete — your results" : `Score report — attempt ${idx + 1}`));
+      fresh ? "Exam complete: your results" : `Score report, attempt ${idx + 1}`));
     inner.appendChild(el("p", { class: "screen-sub" },
       new Date(a.date).toLocaleString() + " · Scaled score is an estimate (CompTIA does not publish its conversion)."));
 
@@ -24,7 +24,7 @@
         el("div", { class: "big" }, a.pass ? "PASS" : "FAIL"),
         el("div", { class: "sub" }, a.pass
           ? "Score at or above the 720 passing standard."
-          : "Below the 720 passing standard — the domain breakdown below shows where to focus.")),
+          : "Below the 720 passing standard, the domain breakdown below shows where to focus.")),
       el("div", { style: "text-align:right" },
         el("div", { class: "big" }, String(a.scaled)),
         el("div", { class: "sub" }, "scale 100–900 · pass 720")));
@@ -58,7 +58,7 @@
     pace.appendChild(el("h3", null, "Pacing"));
     pace.appendChild(el("p", null,
       `Average ${Math.round(a.timeUsed / a.detail.length)}s per question.` +
-      (slow ? ` ${slow} question${slow > 1 ? "s" : ""} took over 2:30 — flagged “slow” in the review below.` : " No questions took over 2:30.") +
+      (slow ? ` ${slow} question${slow > 1 ? "s" : ""} took over 2:30, flagged “slow” in the review below.` : " No questions took over 2:30.") +
       " Budget: ~65 seconds per MC leaves ~10 minutes for PBQs and review."));
     inner.appendChild(pace);
 
@@ -86,7 +86,7 @@
       el("span", { class: "pill" }, NP.DOMAINS[q.domain]),
       el("span", { class: "pill" }, q.diff),
       verdict,
-      el("span", null, `⏱ ${NP.fmtTime(d.time)}${d.time > 150 ? " — slow" : ""}`)));
+      el("span", null, `⏱ ${NP.fmtTime(d.time)}${d.time > 150 ? ": slow" : ""}`)));
 
     if (NP.isPBQ(q)) NP.pbq.render(box, q, () => d.ans, () => {}, { review: true });
     else NP.renderMC(box, q, () => d.ans, () => {}, { review: true });

@@ -143,14 +143,14 @@
       return;
     }
     // The mock is the finish line of the course. Gate it, but let a determined
-    // user through — some people want a cold diagnostic first.
+    // user through - some people want a cold diagnostic first.
     if (!skipGate && NP.course && !NP.course.courseComplete()) {
       const pct = NP.course.percentComplete();
       NP.modal("The mock exam is the finish line",
         `<p>The study course is <strong>${pct}% complete</strong>. It's built to take you from
          first principles to exam-ready, and the mock is designed as the test you sit
          <em>after</em> finishing it.</p>
-         <p>You can still take the mock now as a cold diagnostic — just expect a low score if
+         <p>You can still take the mock now as a cold diagnostic, just expect a low score if
          you haven't worked through the material yet.</p>`,
         [
           { label: "Go to the course", action: () => NP.show(NP.screens.course) },
@@ -166,10 +166,10 @@
       card.innerHTML = `
         <h3>CompTIA Network+ N10-009 practice exam</h3>
         <ul>
-          <li><strong>75 questions · 90 minutes</strong> — performance-based questions (PBQs) first, then multiple-choice, weighted by the official domain percentages.</li>
+          <li><strong>75 questions · 90 minutes</strong>: performance-based questions (PBQs) first, then multiple-choice, weighted by the official domain percentages.</li>
           <li>You can move freely: <strong>Previous / Next</strong>, <strong>Flag for review</strong> on any question, and a <strong>Review Screen</strong> showing what's answered, flagged, or incomplete.</li>
-          <li>PBQs award <strong>partial credit</strong> per completed item — always fill every field.</li>
-          <li>No calculator, like the real exam — keep scratch paper handy for subnetting.</li>
+          <li>PBQs award <strong>partial credit</strong> per completed item, always fill every field.</li>
+          <li>No calculator, like the real exam. Keep scratch paper handy for subnetting.</li>
           <li>Scoring is on CompTIA's 100–900 scale; <strong>720 is passing</strong>. There's no penalty for guessing.</li>
           <li>The clock pauses only if you close the app mid-exam; it runs while the exam is open.</li>
         </ul>`;
@@ -213,7 +213,7 @@
       const timerEl = el("strong", null, "");
       const counterEl = el("strong", null, "");
       root.appendChild(el("div", { class: "topbar" },
-        el("div", { class: "brand" }, "CompTIA Network+ (N10-009) — Practice Exam",
+        el("div", { class: "brand" }, "CompTIA Network+ (N10-009), Practice Exam",
           el("small", null, "Candidate: You · Do not close the window")),
         el("div", { class: "meta" },
           el("span", null, el("span", { class: "lbl" }, "Time Remaining"), timerEl),
@@ -326,7 +326,7 @@
         const unanswered = X.items.filter((id, j) => !NP.isAnsweredAny(NP.byId[id], X.answers[j])).length;
         NP.modal("End exam?",
           `<p>Once you end the exam it will be scored and you cannot return.</p>` +
-          (unanswered ? `<p><strong>${unanswered}</strong> question${unanswered === 1 ? " is" : "s are"} incomplete — they score as incorrect (PBQs keep partial credit).</p>` : ""),
+          (unanswered ? `<p><strong>${unanswered}</strong> question${unanswered === 1 ? " is" : "s are"} incomplete. They score as incorrect (PBQs keep partial credit).</p>` : ""),
           [
             { label: "End exam", action: () => { stopTicker(); commitTime(); finalize(); } },
             { label: "Return", secondary: true }

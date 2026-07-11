@@ -1,10 +1,10 @@
-/* Network+ Study Course — Unit 5: Troubleshooting & Exam Readiness */
+/* Network+ Study Course - Unit 5: Troubleshooting & Exam Readiness */
 (function () {
   const C = window.NETCOURSE = window.NETCOURSE || { units: [] };
 
   C.units.push({
     id: "u5",
-    title: "Unit 5 — Troubleshooting and Exam Readiness",
+    title: "Unit 5: Troubleshooting and Exam Readiness",
     blurb: "The largest domain on the exam, and the real job. Methodology, tools, the symptom-to-cause map, and how to attack PBQs on test day.",
     modules: [
 
@@ -12,12 +12,12 @@
 {
   id: "m5_1", title: "The Methodology and the Toolkit", minutes: 14, level: "core",
   content: `
-<p>Troubleshooting is 24% of the exam — the single biggest domain. CompTIA tests a specific
+<p>Troubleshooting is 24% of the exam: the single biggest domain. CompTIA tests a specific
 seven-step methodology, and it will ask you to name the next step. Memorize the order verbatim.</p>
 
 <h2>The seven steps</h2>
 <ol>
-  <li><strong>Identify the problem.</strong> Gather information, question users, determine what changed, duplicate the problem if possible, and — critically — establish the <em>scope</em>.</li>
+  <li><strong>Identify the problem.</strong> Gather information, question users, determine what changed, duplicate the problem if possible, and (critically) establish the <em>scope</em>.</li>
   <li><strong>Establish a theory of probable cause.</strong> Question the obvious. Consider multiple approaches (top-down, bottom-up, divide and conquer).</li>
   <li><strong>Test the theory to determine the cause.</strong> If confirmed → move on. <strong>If NOT confirmed → establish a new theory or escalate.</strong> You never proceed on a disproven theory.</li>
   <li><strong>Establish a plan of action</strong> and identify potential effects.</li>
@@ -46,7 +46,7 @@ fine, you have just exonerated the switch, the VLAN, the gateway, DHCP, DNS, and
   <tr><td><code>tracert</code> / <code>traceroute</code></td><td>Reveal every hop and locate <em>where</em> the path breaks</td></tr>
   <tr><td><code>ipconfig</code> / <code>ifconfig</code> / <code>ip addr</code></td><td>Show IP, mask, gateway; <code>/all</code> adds DNS, DHCP server, and MAC</td></tr>
   <tr><td><code>nslookup</code> / <code>dig</code></td><td>Query DNS directly, and against a <em>specific</em> server</td></tr>
-  <tr><td><code>netstat</code> / <code>ss</code></td><td>Show listening ports and active connections — proves a service is actually up</td></tr>
+  <tr><td><code>netstat</code> / <code>ss</code></td><td>Show listening ports and active connections: proves a service is actually up</td></tr>
   <tr><td><code>arp -a</code> / <code>arp -d</code></td><td>View or clear the IP-to-MAC cache</td></tr>
   <tr><td><code>route print</code> / <code>ip route</code></td><td>Show the host's routing table (a stray static route explains "only this PC fails")</td></tr>
   <tr><td><code>pathping</code> / <code>mtr</code></td><td>Traceroute + per-hop packet loss statistics. The fastest way to prove the loss is the ISP's.</td></tr>
@@ -61,7 +61,7 @@ Success narrows the search as powerfully as failure does.</div>
   <tr><th>Tool</th><th>Job</th></tr>
   <tr><td><strong>Cable tester</strong></td><td>Wiremap: opens, shorts, reversed pairs, split pairs</td></tr>
   <tr><td><strong>Tone generator and probe</strong></td><td>Find which jack a cable terminates at ("toning out" a run)</td></tr>
-  <tr><td><strong>TDR</strong> / <strong>OTDR</strong></td><td>Distance to a fault — copper (TDR) or fiber (OTDR)</td></tr>
+  <tr><td><strong>TDR</strong> / <strong>OTDR</strong></td><td>Distance to a fault: copper (TDR) or fiber (OTDR)</td></tr>
   <tr><td><strong>Light meter / OPM</strong></td><td>Measure optical power on a fiber link</td></tr>
   <tr><td><strong>Spectrum analyzer</strong></td><td>Find RF interference sources in wireless</td></tr>
   <tr><td><strong>Punch-down tool</strong></td><td>Terminate wires into a patch panel or keystone jack</td></tr>
@@ -89,7 +89,7 @@ Success narrows the search as powerfully as failure does.</div>
       expl: "A disproven theory sends you back to step 2. Proceeding to a plan of action on a theory you have just disproven is exactly what the methodology forbids." },
     { text: "Which tool shows per-hop packet loss along a path, combining traceroute with statistics?",
       choices: ["ping", "pathping / mtr", "arp", "netstat"], answer: 1,
-      expl: "pathping (Windows) and mtr (Linux) run repeated probes to every hop, revealing which hop introduces loss — ideal for proving the fault lies upstream." },
+      expl: "pathping (Windows) and mtr (Linux) run repeated probes to every hop, revealing which hop introduces loss, ideal for proving the fault lies upstream." },
     { text: "Which tool locates the specific wall jack that a cable in the wiring closet terminates at?",
       choices: ["Tone generator and probe", "Protocol analyzer", "Spectrum analyzer", "Loopback plug"], answer: 0,
       expl: "The toner injects a signal onto the cable and the probe detects it at the far end. A protocol analyzer inspects traffic, not physical cable paths." },
@@ -132,7 +132,7 @@ answer most Domain 5 questions on sight.</p>
   <tr><td>No link light at all</td><td>Layer 1: unplugged/broken cable, dead port, port administratively shut down, device powered off</td></tr>
   <tr><td><strong>CRC / FCS errors</strong></td><td>Corrupted frames → bad cable, bad connector, EMI, failing transceiver</td></tr>
   <tr><td><strong>Late collisions</strong></td><td><strong>Duplex mismatch.</strong> They cannot occur on a correctly negotiated full-duplex link.</td></tr>
-  <tr><td>Gigabit link negotiates at 100 Mbps</td><td>A damaged pair — 1000BASE-T needs all four; 100BASE-TX needs only two. Or a hard-coded speed setting.</td></tr>
+  <tr><td>Gigabit link negotiates at 100 Mbps</td><td>A damaged pair: 1000BASE-T needs all four; 100BASE-TX needs only two. Or a hard-coded speed setting.</td></tr>
   <tr><td>Intermittent errors on a long run</td><td>Exceeds the 100 m limit → attenuation</td></tr>
   <tr><td>Fiber link won't come up despite good connectors</td><td>Wavelength/optic mismatch (850 nm vs 1310 nm), or TX/RX reversed, or dirty ends</td></tr>
 </table>
@@ -150,20 +150,20 @@ answer most Domain 5 questions on sight.</p>
 <table>
   <tr><th>Symptom</th><th>Cause</th></tr>
   <tr><td><strong>169.254.x.x address</strong></td><td><strong>DHCP failed.</strong> Server down, missing relay/helper on that VLAN, port on the wrong VLAN, or a Layer 1 fault.</td></tr>
-  <tr><td>New VLAN gets no addresses, others fine</td><td><strong>Missing DHCP relay (ip helper-address)</strong> — the #1 cause, every time</td></tr>
+  <tr><td>New VLAN gets no addresses, others fine</td><td><strong>Missing DHCP relay (ip helper-address)</strong>: the #1 cause, every time</td></tr>
   <tr><td>Duplicate IP address warnings</td><td>A static IP assigned inside the DHCP pool. Fix with reservations or exclusions.</td></tr>
   <tr><td>Wrong gateway/DNS handed out to some users</td><td><strong>Rogue DHCP server.</strong> Confirm with <code>ipconfig /all</code>; mitigate with DHCP snooping.</td></tr>
   <tr><td>Can reach local hosts, nothing off-subnet</td><td>Missing or wrong <strong>default gateway</strong></td></tr>
-  <tr><td>Selective failures to hosts on the same LAN</td><td>Wrong <strong>subnet mask</strong> — the host misjudges what's local</td></tr>
+  <tr><td>Selective failures to hosts on the same LAN</td><td>Wrong <strong>subnet mask</strong>: the host misjudges what's local</td></tr>
 </table>
 
 <h2>Name resolution and services</h2>
 <table>
   <tr><th>Symptom</th><th>Cause</th></tr>
-  <tr><td>Ping by IP works, ping by name fails</td><td><strong>DNS</strong> — wrong/unreachable resolver, or bad record</td></tr>
+  <tr><td>Ping by IP works, ping by name fails</td><td><strong>DNS</strong>: wrong/unreachable resolver, or bad record</td></tr>
   <tr><td>Correct URL, but the wrong site appears</td><td>DNS poisoning, or a modified hosts file</td></tr>
   <tr><td>Ping succeeds but the app won't connect on its port</td><td>Service not listening, or a firewall/ACL blocking that port. Verify with <code>netstat</code>.</td></tr>
-  <tr><td>Certificate warnings</td><td>Expired cert, name mismatch, untrusted CA — or an actual on-path attack. Never train users to click through.</td></tr>
+  <tr><td>Certificate warnings</td><td>Expired cert, name mismatch, untrusted CA, or an actual on-path attack. Never train users to click through.</td></tr>
 </table>
 
 <h2>Switching and routing symptoms</h2>
@@ -173,7 +173,7 @@ answer most Domain 5 questions on sight.</p>
   <tr><td>Half a VLAN's users lose connectivity after a change</td><td>The VLAN isn't in the trunk's <strong>allowed VLAN list</strong> (the command overwrites, it doesn't append)</td></tr>
   <tr><td>Config works, then reverts after reboot</td><td>Running config was never saved to startup config</td></tr>
   <tr><td>Traffic takes a slow backup path</td><td>Route selection: wrong <strong>administrative distance</strong> or metric (a stale static route)</td></tr>
-  <tr><td>Asymmetric routing / intermittent app failures</td><td>Traffic leaves one path, returns another — stateful firewalls drop the reply</td></tr>
+  <tr><td>Asymmetric routing / intermittent app failures</td><td>Traffic leaves one path, returns another: stateful firewalls drop the reply</td></tr>
 </table>
 
 <h2>Wireless symptoms</h2>
@@ -182,7 +182,7 @@ answer most Domain 5 questions on sight.</p>
   <tr><td>Slow/dropping only far from the AP</td><td>Weak signal → attenuation. More APs, better placement.</td></tr>
   <tr><td><strong>Strong signal but terrible throughput</strong></td><td><strong>Interference</strong> (noise floor up, SNR down). Use a spectrum analyzer.</td></tr>
   <tr><td>Slow when many users are on one AP</td><td>Capacity/airtime contention, not coverage. Add APs, use band steering.</td></tr>
-  <tr><td>Clients cling to a distant AP</td><td>Sticky clients — transmit power set too high</td></tr>
+  <tr><td>Clients cling to a distant AP</td><td>Sticky clients: transmit power set too high</td></tr>
   <tr><td>Users randomly disconnected</td><td>Deauthentication attack, or channel/DFS radar event</td></tr>
 </table>
 
@@ -243,7 +243,7 @@ answer most Domain 5 questions on sight.</p>
         "DNS is misconfigured",
         "The PoE budget was exceeded"],
       answer: 0,
-      expl: "Changes exist only in the running config until saved. On reboot, the device loads the startup config from NVRAM — which never received the changes." },
+      expl: "Changes exist only in the running config until saved. On reboot, the device loads the startup config from NVRAM, which never received the changes." },
     { text: "Which two symptoms point to a physical cabling problem? (Select TWO.)",
       choices: [
         "Increasing CRC/FCS errors on an interface",
@@ -252,7 +252,7 @@ answer most Domain 5 questions on sight.</p>
         "Ping by IP works but names fail to resolve",
         "The default gateway is unreachable from every VLAN"],
       answer: [0, 2],
-      expl: "CRC errors indicate corrupted frames from a damaged cable or connector, and a gigabit link dropping to 100 Mbps suggests a damaged pair — 1000BASE-T needs all four pairs." },
+      expl: "CRC errors indicate corrupted frames from a damaged cable or connector, and a gigabit link dropping to 100 Mbps suggests a damaged pair, 1000BASE-T needs all four pairs." },
     { text: "After a change window, only the users behind one remote switch lose access to a VLAN, while local users on that VLAN work. What should you check?",
       choices: [
         "The trunk's allowed VLAN list on the uplink",
@@ -260,7 +260,7 @@ answer most Domain 5 questions on sight.</p>
         "The UPS battery level",
         "The wireless channel plan"],
       answer: 0,
-      expl: "If the VLAN was removed from the trunk's allowed list, it cannot cross the uplink — so local ports still work while the remote switch's users are cut off." }
+      expl: "If the VLAN was removed from the trunk's allowed list, it cannot cross the uplink, so local ports still work while the remote switch's users are cut off." }
   ]
 },
 
@@ -278,7 +278,7 @@ Ethernet adapter Ethernet:
    Subnet Mask . . . . . . . . . . . : 255.255.0.0
    Default Gateway . . . . . . . . . :</div>
 <p><strong>Read it:</strong> 169.254 = APIPA, mask 255.255.0.0, <em>no gateway at all</em>.
-<strong>Conclusion:</strong> DHCP failed. Now find out why — is the port on the right VLAN? Is the
+<strong>Conclusion:</strong> DHCP failed. Now find out why: is the port on the right VLAN? Is the
 helper address configured? Is the link even up? Compare against a working neighbor.</p>
 
 <h2>Case 2: DNS versus connectivity</h2>
@@ -287,7 +287,7 @@ Reply from 8.8.8.8: bytes=32 time=14ms TTL=115
 
 C:\\> ping www.example.com
 Ping request could not find host www.example.com.</div>
-<p><strong>Read it:</strong> pinging a public IP works — so the NIC, gateway, routing, NAT, and the ISP are all
+<p><strong>Read it:</strong> pinging a public IP works, so the NIC, gateway, routing, NAT, and the ISP are all
 fine. Only name resolution fails. <strong>Conclusion:</strong> DNS. Check the configured resolver with
 <code>ipconfig /all</code> and query it directly with <code>nslookup</code>.</p>
 
@@ -299,9 +299,9 @@ fine. Only name resolution fails. <strong>Conclusion:</strong> DNS. Check the co
   4    *      *      *      Request timed out.
   5    *      *      *      Request timed out.</div>
 <p><strong>Read it:</strong> the first two hops answer; everything past hop 2 is silent.
-<strong>Conclusion:</strong> the break is at or just beyond hop 2 — likely the WAN link or the provider's edge.</p>
+<strong>Conclusion:</strong> the break is at or just beyond hop 2: likely the WAN link or the provider's edge.</p>
 <div class="warnbox"><strong>But be careful:</strong> a single hop showing <code>* * *</code> while later hops
-respond normally is <em>not</em> a fault — that router simply doesn't reply to ICMP. Only sustained timeouts
+respond normally is <em>not</em> a fault. That router simply doesn't reply to ICMP. Only sustained timeouts
 <em>through to the destination</em> indicate a real break.</div>
 
 <h2>Case 4: the service isn't listening</h2>
@@ -319,7 +319,7 @@ or a firewall/ACL is blocking the port. This is <em>not</em> a network reachabil
   Full-duplex, 1000Mb/s
   input errors 24501, CRC 24488, frame 13
   output errors 0, collisions 0</div>
-<p><strong>Read it:</strong> the link is up and full-duplex (so it isn't a duplex mismatch — no late
+<p><strong>Read it:</strong> the link is up and full-duplex (so it isn't a duplex mismatch, no late
 collisions), but CRC errors are enormous. <strong>Conclusion:</strong> corrupted frames = Layer 1. Bad
 cable, bad connector, EMI, or a failing transceiver. Swap the patch cable first.</p>
 
@@ -329,7 +329,7 @@ cable, bad connector, EMI, or a failing transceiver. Swap the patch cable first.
    Default Gateway . . . . . . . . . : 192.168.88.1
    DHCP Server . . . . . . . . . . . : 192.168.88.99
    DNS Servers . . . . . . . . . . . : 192.168.88.99</div>
-<p><strong>Read it:</strong> the client got a lease — but from <code>192.168.88.99</code>, which is not the
+<p><strong>Read it:</strong> the client got a lease, but from <code>192.168.88.99</code>, which is not the
 corporate DHCP server, and DNS points at the same unfamiliar host. <strong>Conclusion:</strong> a rogue DHCP
 server (possibly an on-path attack). Mitigate with DHCP snooping.</p>
 
@@ -345,7 +345,7 @@ server (possibly an on-path attack). Mitigate with DHCP snooping.</p>
 <ul>
   <li>169.254 = DHCP failed. No gateway listed = no gateway.</li>
   <li>IP pings, name doesn't = DNS.</li>
-  <li>Ping works, port refuses = service or firewall — not the network.</li>
+  <li>Ping works, port refuses = service or firewall, not the network.</li>
   <li>CRC errors + full duplex = cable, not duplex. Late collisions = duplex.</li>
   <li>Scattered <code>* * *</code> in traceroute is normal; sustained timeouts to the end are not.</li>
 </ul>`,
@@ -368,7 +368,7 @@ server (possibly an on-path attack). Mitigate with DHCP snooping.</p>
         "An exhausted DHCP scope",
         "A missing default route"],
       answer: 0,
-      expl: "Full-duplex with no collisions rules out a duplex mismatch. Large CRC counts mean corrupted frames — a Layer 1 fault such as a damaged cable or failing optic." },
+      expl: "Full-duplex with no collisions rules out a duplex mismatch. Large CRC counts mean corrupted frames: a Layer 1 fault such as a damaged cable or failing optic." },
     { text: "A traceroute shows hops 1 and 2 replying, then sustained timeouts all the way to the destination. What does this indicate?",
       choices: [
         "The path breaks at or beyond hop 2",
@@ -384,7 +384,7 @@ server (possibly an on-path attack). Mitigate with DHCP snooping.</p>
         "The subnet mask on the router",
         "The switch's PoE budget"],
       answer: 0,
-      expl: "Ping succeeding proves Layers 1 through 3. A refused port points to the service being down or a firewall/ACL blocking it — verify with netstat on the server." },
+      expl: "Ping succeeding proves Layers 1 through 3. A refused port points to the service being down or a firewall/ACL blocking it. Verify with netstat on the server." },
     { text: "ipconfig /all shows the client received its lease from an unfamiliar DHCP server address. What does this suggest?",
       choices: [
         "A rogue DHCP server on the network",
@@ -415,19 +415,19 @@ server (possibly an on-path attack). Mitigate with DHCP snooping.</p>
 <h2>The exam, mechanically</h2>
 <ul>
   <li><strong>Up to 90 questions, 90 minutes.</strong> Multiple-choice, multi-select, and performance-based questions (PBQs).</li>
-  <li><strong>Scored 100–900. Passing is 720.</strong> You do <em>not</em> need to be perfect — you need to be solidly competent across all five domains.</li>
+  <li><strong>Scored 100–900. Passing is 720.</strong> You do <em>not</em> need to be perfect. You need to be solidly competent across all five domains.</li>
   <li><strong>No penalty for wrong answers.</strong> Never, ever leave a question blank.</li>
   <li>You can flag questions and return to them. Use it.</li>
 </ul>
 
 <h2>PBQ tactics</h2>
 <p>PBQs appear <strong>first</strong> and they are the biggest time trap on the exam. They're also
-worth <strong>partial credit</strong> — every correct sub-item scores, even if you get others wrong.</p>
+worth <strong>partial credit</strong>: every correct sub-item scores, even if you get others wrong.</p>
 <div class="keybox"><strong>The winning PBQ strategy:</strong>
 <ol>
   <li>Read the scenario once and identify what's actually being asked.</li>
   <li>Fill in every item you're confident about immediately.</li>
-  <li>For items you're unsure of, <strong>make your best guess anyway</strong> — a blank scores zero, a guess might score.</li>
+  <li>For items you're unsure of, <strong>make your best guess anyway</strong>: a blank scores zero, a guess might score.</li>
   <li>If a PBQ is eating your time, <strong>flag it and move on.</strong> You can bank 40 easy multiple-choice points in the time one stubborn PBQ steals.</li>
   <li>Come back at the end with whatever time remains.</li>
 </ol></div>
@@ -435,18 +435,18 @@ worth <strong>partial credit</strong> — every correct sub-item scores, even if
 worksheet, configure a firewall ACL in the right order, select the correct device for each spot in a
 topology, diagnose command output, and configure wireless settings.</p>
 
-<h2>ACL ordering — the PBQ that trips everyone</h2>
+<h2>ACL ordering: the PBQ that trips everyone</h2>
 <p>Firewall rules are evaluated <strong>top-down, first match wins</strong>, with an <strong>implicit deny</strong>
 at the bottom. Therefore:</p>
 <ul>
   <li><strong>Specific rules go ABOVE general rules.</strong> Always.</li>
-  <li>If a broad <code>PERMIT</code> sits above a specific <code>DENY</code>, the deny is <em>never reached</em> — the permit matches first and evaluation stops.</li>
+  <li>If a broad <code>PERMIT</code> sits above a specific <code>DENY</code>, the deny is <em>never reached</em>: the permit matches first and evaluation stops.</li>
   <li>End with an explicit deny-all for clarity and logging.</li>
 </ul>
 
 <h2>Time management</h2>
 <ul>
-  <li>90 minutes ÷ ~90 questions ≈ <strong>60 seconds each</strong> — but PBQs need 5–8 minutes apiece.</li>
+  <li>90 minutes ÷ ~90 questions ≈ <strong>60 seconds each</strong>, but PBQs need 5–8 minutes apiece.</li>
   <li>Budget: knock out the multiple-choice at ~50 seconds each, leaving 20–25 minutes for PBQs and review.</li>
   <li><strong>Do a first pass answering everything you know.</strong> Flag anything that takes more than 90 seconds.</li>
   <li>Second pass: the flagged items, with a calmer head and no unanswered questions hanging over you.</li>
@@ -454,11 +454,11 @@ at the bottom. Therefore:</p>
 
 <h2>How to attack a multiple-choice question</h2>
 <ol>
-  <li><strong>Read the last sentence first</strong> — it tells you what's actually being asked. Scenarios are often padded with irrelevant detail.</li>
+  <li><strong>Read the last sentence first</strong>: it tells you what's actually being asked. Scenarios are often padded with irrelevant detail.</li>
   <li><strong>Note the qualifier:</strong> "MOST likely," "BEST," "FIRST." Several answers may be technically true; only one is the best/first.</li>
   <li><strong>Eliminate ruthlessly.</strong> Two answers are usually obviously wrong. That doubles your odds instantly.</li>
-  <li><strong>Watch the count</strong> on multi-select: "Select TWO" means exactly two — and there's no partial credit on multiple-choice.</li>
-  <li><strong>Trust the methodology.</strong> If a question asks what to do next and the methodology gives an answer, that's the answer — not the "practical" shortcut.</li>
+  <li><strong>Watch the count</strong> on multi-select: "Select TWO" means exactly two, and there's no partial credit on multiple-choice.</li>
+  <li><strong>Trust the methodology.</strong> If a question asks what to do next and the methodology gives an answer, that's the answer, not the "practical" shortcut.</li>
 </ol>
 <div class="warnbox"><strong>The trap CompTIA loves:</strong> a scenario where the technically clever answer
 is available, but the question asks for the <em>FIRST</em> step. The first step is almost always the simple,
@@ -466,18 +466,18 @@ methodical one: check the physical layer, gather information, establish scope.</
 
 <h2>Final-week checklist</h2>
 <ul>
-  <li><strong>Ports table</strong> — recall must be instant. Free marks.</li>
-  <li><strong>Subnetting</strong> — do ten problems a day until block size arithmetic is reflex.</li>
-  <li><strong>OSI layers</strong> — layers, data units, devices.</li>
-  <li><strong>Troubleshooting methodology</strong> — the seven steps in exact order.</li>
-  <li><strong>Symptom→cause map</strong> (Module 18) — reread it the morning of the exam.</li>
-  <li><strong>Wireless</strong> — 1/6/11, WPA3-Enterprise, co-channel vs adjacent-channel.</li>
-  <li><strong>Attack→mitigation pairs</strong> — DAI, port security, DHCP snooping, BPDU guard.</li>
+  <li><strong>Ports table</strong>: recall must be instant. Free marks.</li>
+  <li><strong>Subnetting</strong>: do ten problems a day until block size arithmetic is reflex.</li>
+  <li><strong>OSI layers</strong>: layers, data units, devices.</li>
+  <li><strong>Troubleshooting methodology</strong>: the seven steps in exact order.</li>
+  <li><strong>Symptom→cause map</strong> (Module 18): reread it the morning of the exam.</li>
+  <li><strong>Wireless</strong>: 1/6/11, WPA3-Enterprise, co-channel vs adjacent-channel.</li>
+  <li><strong>Attack→mitigation pairs</strong>: DAI, port security, DHCP snooping, BPDU guard.</li>
 </ul>
 
 <h2>On the day</h2>
 <p>Sleep. Eat. Arrive early. Read every question completely before looking at the answers. When you don't
-know, eliminate what you can and commit — a guess costs nothing and a blank scores nothing.</p>
+know, eliminate what you can and commit. A guess costs nothing and a blank scores nothing.</p>
 <p>You've done the work. Now go take the mock exam and find out what's left to polish.</p>`,
   quiz: [
     { text: "How should you handle a PBQ that is consuming a large amount of time?",
@@ -509,12 +509,12 @@ know, eliminate what you can and commit — a guess costs nothing and a blank sc
       expl: "The Network+ exam is scored on a 100–900 scale with 720 required to pass." },
     { text: "A question asks what a technician should do FIRST. Several answers are technically valid actions. Which should you choose?",
       choices: [
-        "The step that comes first in the troubleshooting methodology — usually gathering information or checking the physical layer",
+        "The step that comes first in the troubleshooting methodology, usually gathering information or checking the physical layer",
         "The most technically advanced fix",
         "The action that costs the least money",
         "The one that escalates to a senior engineer"],
       answer: 0,
-      expl: "When a question asks for the FIRST step, CompTIA is testing the methodology. The correct answer is the simple, methodical one — identify the problem, check Layer 1, establish scope." },
+      expl: "When a question asks for the FIRST step, CompTIA is testing the methodology. The correct answer is the simple, methodical one: identify the problem, check Layer 1, establish scope." },
     { text: "Which two are sound exam strategies? (Select TWO.)",
       choices: [
         "Never leave a question unanswered, since there is no guessing penalty",
@@ -526,7 +526,7 @@ know, eliminate what you can and commit — a guess costs nothing and a blank sc
       expl: "Guessing is free, so never leave a blank. Reading the actual question before the scenario detail saves time. Selecting the wrong number of answers on multi-select scores zero." },
     { text: "On a multi-select question that says 'Select TWO', what happens if you select only one correct answer?",
       choices: [
-        "The question is scored as incorrect — multiple-choice questions have no partial credit",
+        "The question is scored as incorrect: multiple-choice questions have no partial credit",
         "You receive half credit",
         "The exam prompts you to add another",
         "It is scored as correct"],
@@ -536,7 +536,7 @@ know, eliminate what you can and commit — a guess costs nothing and a blank sc
 }
     ],
 
-/* ================= CHECKPOINT 5 — FINAL READINESS (cumulative, all units) ================= */
+/* ================= CHECKPOINT 5 - FINAL READINESS (cumulative, all units) ================= */
     checkpoint: {
       id: "cp5", title: "Final Readiness Exam", n: 25,
       questions: [
@@ -578,7 +578,7 @@ know, eliminate what you can and commit — a guess costs nothing and a blank sc
           expl: "The same MAC learned on multiple ports is the classic symptom of a Layer 2 bridging loop." },
         { text: "Which prefix should be used for a point-to-point link between two routers?",
           choices: ["/24", "/28", "/30", "/32"], answer: 2,
-          expl: "A /30 gives exactly two usable addresses — one per router — with no waste." },
+          expl: "A /30 gives exactly two usable addresses (one per router) with no waste." },
         { text: "Which cloud model requires you to manage the operating system and applications?",
           choices: ["SaaS", "PaaS", "IaaS", "None of them"], answer: 2,
           expl: "IaaS provides virtualized infrastructure; the OS, runtime, and applications remain your responsibility." },
@@ -614,7 +614,7 @@ know, eliminate what you can and commit — a guess costs nothing and a blank sc
             "They are worth fewer points than multiple-choice questions",
             "Blank items receive half credit"],
           answer: [0, 2],
-          expl: "PBQs come first and score each sub-item independently, which is why you should always fill in every field — a guess can score, a blank cannot." },
+          expl: "PBQs come first and score each sub-item independently, which is why you should always fill in every field. A guess can score, a blank cannot." },
         { text: "Which command reveals which DHCP server issued a client's lease?",
           choices: ["ipconfig /all", "ping -t", "tracert", "arp -d"], answer: 0,
           expl: "ipconfig /all displays the DHCP server address, exposing a rogue server when the address is unfamiliar." },

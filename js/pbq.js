@@ -11,7 +11,7 @@
      ],
      expl, tip }
 
-   Answer state: array, one slot per item — index (select) or string (fill), null/"" = blank.
+   Answer state: array, one slot per item, index (select) or string (fill), null/"" = blank.
 */
 (function () {
   "use strict";
@@ -53,7 +53,7 @@
     return it.options[it.answer];
   };
 
-  /* Renders the PBQ body. opts: { review, disabled } — review paints per-item
+  /* Renders the PBQ body. opts: { review, disabled } - review paints per-item
      verdicts and shows correct values. */
   P.render = function (container, q, getAns, setAns, opts) {
     opts = opts || {};
@@ -62,7 +62,7 @@
 
     container.appendChild(el("div", { class: "pbq-title" }, q.title));
     container.appendChild(el("div", { class: "pbq-note" },
-      q.note || "Performance-based question — complete every field. Partial credit is awarded per item."));
+      q.note || "Performance-based question: complete every field. Partial credit is awarded per item."));
     container.appendChild(el("div", { class: "qtext", html: q.stem }));
 
     const wrap = el("div", { class: "pbq-items" });
@@ -92,7 +92,7 @@
         right.appendChild(inp);
       } else {
         const sel = el("select", { onchange: e => setItem(e.target.value === "" ? null : parseInt(e.target.value, 10)) });
-        sel.appendChild(el("option", { value: "" }, "— choose —"));
+        sel.appendChild(el("option", { value: "" }, ", choose, "));
         it.options.forEach((o, oi) => {
           const opt = el("option", { value: String(oi) }, o);
           if (current() === oi) opt.selected = true;

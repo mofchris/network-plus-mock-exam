@@ -1,4 +1,4 @@
-/* Performance-Based Questions — scored per item (partial credit). */
+/* Performance-Based Questions - scored per item (partial credit). */
 (function () {
   const B = window.NETBANK = window.NETBANK || {};
   B.pbqs = B.pbqs || [];
@@ -28,7 +28,7 @@
         { kind: "select", label: "<b>SMTP</b> (mail transfer)", options: PORTS, answer: 3 },
         { kind: "select", label: "<b>Syslog</b> (centralized logging)", options: PORTS, answer: 15 }
       ],
-      expl: "SSH 22, DNS 53, HTTPS 443, RDP 3389, SMTP 25, Syslog 514. These are among the most frequently tested ports on the exam — and the ones you will open and close constantly in practice.",
+      expl: "SSH 22, DNS 53, HTTPS 443, RDP 3389, SMTP 25, Syslog 514. These are among the most frequently tested ports on the exam, and the ones you will open and close constantly in practice.",
       tip: "Build the ports table into memory early; several MC questions plus most port PBQs are free points once you have it." },
 
     /* ---------- PBQ 2: troubleshooting methodology ordering ---------- */
@@ -62,7 +62,7 @@
         { kind: "fill", label: "Last usable host address", answer: ["192.168.20.126"], placeholder: "x.x.x.x" },
         { kind: "fill", label: "Number of usable host addresses", answer: ["62"], placeholder: "number" }
       ],
-      expl: "/26 = 255.255.255.192, a block size of 64. The blocks are .0, .64, .128, .192 — so .75 lives in the .64 block: network 192.168.20.64, broadcast 192.168.20.127, usable range .65–.126, giving 2⁶ − 2 = 62 hosts.",
+      expl: "/26 = 255.255.255.192, a block size of 64. The blocks are .0, .64, .128, .192, so .75 lives in the .64 block: network 192.168.20.64, broadcast 192.168.20.127, usable range .65–.126, giving 2⁶ − 2 = 62 hosts.",
       tip: "Block size = 256 − mask octet. Find the block containing the host, and everything else follows mechanically." },
 
     /* ---------- PBQ 4: command output analysis ---------- */
@@ -85,11 +85,11 @@ Destination host unreachable.</div>
         { kind: "select", label: "What does this indicate about DHCP?",
           options: ["The client received a valid lease", "The client could not reach a DHCP server", "The DHCP server assigned a static address", "DHCP is not required on this network"], answer: 1 },
         { kind: "select", label: "Since other users on the floor work fine, what is the MOST likely cause?",
-          options: ["The DHCP server is completely offline", "A problem local to this port/host — bad cable, wrong VLAN, or NIC issue", "The internet circuit is down", "DNS is misconfigured network-wide"], answer: 1 },
+          options: ["The DHCP server is completely offline", "A problem local to this port/host, bad cable, wrong VLAN, or NIC issue", "The internet circuit is down", "DNS is misconfigured network-wide"], answer: 1 },
         { kind: "select", label: "Which command would you run FIRST after fixing the physical/VLAN issue?",
           options: ["ipconfig /renew", "route delete", "netstat -an", "arp -d"], answer: 0 }
       ],
-      expl: "169.254.x.x is APIPA — the client self-assigned because no DHCP server answered. Because peers on the same floor work, shared infrastructure (the DHCP server, the circuit) is exonerated; the fault is local to this port or host — a bad cable, a port on the wrong VLAN, or a NIC problem. After correcting it, ipconfig /renew requests a proper lease.",
+      expl: "169.254.x.x is APIPA: the client self-assigned because no DHCP server answered. Because peers on the same floor work, shared infrastructure (the DHCP server, the circuit) is exonerated; the fault is local to this port or host: a bad cable, a port on the wrong VLAN, or a NIC problem. After correcting it, ipconfig /renew requests a proper lease.",
       tip: "Comparing a broken host against a working peer on the same segment is the fastest way to localize a fault." },
 
     /* ---------- PBQ 5: topology / device selection ---------- */
@@ -121,16 +121,16 @@ Destination host unreachable.</div>
         </div>
         <p>Position <b>B</b> connects the public web server; position <b>C</b> connects employee workstations.</p>`,
       items: [
-        { kind: "select", label: "Position <b>A</b> — connects the office to the ISP and routes between networks",
+        { kind: "select", label: "Position <b>A</b>: connects the office to the ISP and routes between networks",
           options: ["Router", "Unmanaged hub", "Media converter", "Repeater"], answer: 0 },
-        { kind: "select", label: "Position <b>B</b> — filters traffic and isolates the public server in a screened subnet",
+        { kind: "select", label: "Position <b>B</b>: filters traffic and isolates the public server in a screened subnet",
           options: ["Firewall (with DMZ/screened subnet)", "Layer 2 hub", "Patch panel", "Load balancer"], answer: 0 },
-        { kind: "select", label: "Position <b>C</b> — connects employee PCs and forwards frames by MAC address",
+        { kind: "select", label: "Position <b>C</b>: connects employee PCs and forwards frames by MAC address",
           options: ["Switch", "Router", "Modem", "Bridge tap"], answer: 0 },
         { kind: "select", label: "The public web server should be placed in which zone?",
           options: ["The internal LAN with the PCs", "A screened subnet (DMZ)", "The ISP's network", "A guest wireless VLAN"], answer: 1 }
       ],
-      expl: "The edge router connects to the ISP and routes between networks. The firewall enforces policy and hosts the screened subnet (DMZ) where the internet-facing web server belongs — so a compromise of that server does not directly expose the internal LAN. The switch serves the employee access layer, forwarding by MAC address.",
+      expl: "The edge router connects to the ISP and routes between networks. The firewall enforces policy and hosts the screened subnet (DMZ) where the internet-facing web server belongs, so a compromise of that server does not directly expose the internal LAN. The switch serves the employee access layer, forwarding by MAC address.",
       tip: "Any internet-reachable service belongs in a DMZ, never on the internal user VLAN." },
 
     /* ---------- PBQ 6: wireless configuration ---------- */
@@ -139,7 +139,7 @@ Destination host unreachable.</div>
       note: "Choose the best setting for each configuration field.",
       stem: `<p>You are deploying wireless for a 60-employee company with a RADIUS server already in place. Three APs will cover the office on the 2.4 GHz band, and a separate network is needed for visitors.</p>`,
       items: [
-        { kind: "select", label: "Corporate SSID — security mode",
+        { kind: "select", label: "Corporate SSID, security mode",
           options: ["WEP 128-bit", "WPA2-Personal (PSK)", "WPA3-Enterprise with 802.1X", "Open with MAC filtering"], answer: 2 },
         { kind: "select", label: "Channel plan for the three 2.4 GHz APs",
           options: ["1, 6, 11", "1, 2, 3", "6, 7, 8", "All APs on channel 6"], answer: 0 },
@@ -150,8 +150,8 @@ Destination host unreachable.</div>
         { kind: "select", label: "Two APs must cover a large open floor. What causes performance loss if both use the same channel?",
           options: ["Co-channel interference", "Duplex mismatch", "CRC errors", "APIPA addressing"], answer: 0 }
       ],
-      expl: "WPA3-Enterprise with 802.1X against RADIUS gives each user unique credentials — the strongest option available here. In 2.4 GHz only channels 1, 6, and 11 are non-overlapping, so three APs should use those. Guests belong on a segmented, internet-only VLAN with client isolation. Two APs sharing a channel with overlapping coverage contend for airtime, which is co-channel interference.",
-      tip: "Enterprise (802.1X + RADIUS) beats Personal (PSK) whenever a RADIUS server exists — the exam rewards this every time." },
+      expl: "WPA3-Enterprise with 802.1X against RADIUS gives each user unique credentials: the strongest option available here. In 2.4 GHz only channels 1, 6, and 11 are non-overlapping, so three APs should use those. Guests belong on a segmented, internet-only VLAN with client isolation. Two APs sharing a channel with overlapping coverage contend for airtime, which is co-channel interference.",
+      tip: "Enterprise (802.1X + RADIUS) beats Personal (PSK) whenever a RADIUS server exists: the exam rewards this every time." },
 
     /* ---------- PBQ 7: firewall ACL ordering ---------- */
     { id: "pbq_acl", domain: 4, diff: "hard",
@@ -196,20 +196,20 @@ Destination host unreachable.</div>
           answer: 1 },
         { kind: "select", label: "What happens if the contractor DENY rule is placed BELOW the internal PERMIT rule?",
           options: [
-            "Nothing changes — order is irrelevant",
+            "Nothing changes: order is irrelevant",
             "Contractors would be permitted, because the broader PERMIT matches first and stops evaluation",
             "Both rules would apply simultaneously",
             "The firewall would reject the configuration"],
           answer: 1 }
       ],
-      expl: "ACLs are evaluated top-down and stop at the first match, so specific denies must precede broader permits. Blocking contractors first, then permitting internal users to finance, then permitting inbound HTTPS to the web server, and finally an explicit deny-all satisfies every requirement. If the contractor deny sat below the 10.0.0.0/8 permit, contractors (who are inside 10.0.0.0/8) would match the permit first and gain access — the rule would never be reached.",
+      expl: "ACLs are evaluated top-down and stop at the first match, so specific denies must precede broader permits. Blocking contractors first, then permitting internal users to finance, then permitting inbound HTTPS to the web server, and finally an explicit deny-all satisfies every requirement. If the contractor deny sat below the 10.0.0.0/8 permit, contractors (who are inside 10.0.0.0/8) would match the permit first and gain access. The rule would never be reached.",
       tip: "Rule order questions are pure logic: specific before general, and remember the implicit deny at the bottom." },
 
     /* ---------- PBQ 8: cable and media selection ---------- */
     { id: "pbq_cabling", domain: 2, diff: "medium",
       title: "PBQ: Choose the correct cable or media for each run",
       note: "Select the most appropriate and cost-effective media that meets each requirement.",
-      stem: `<p>A campus network requires the runs below. Choose the most appropriate media for each — meeting the requirement without over-engineering.</p>`,
+      stem: `<p>A campus network requires the runs below. Choose the most appropriate media for each: meeting the requirement without over-engineering.</p>`,
       items: [
         { kind: "select", label: "10 Gbps between two switches in the same rack, 3 m apart",
           options: ["Cat 6a patch cable (or DAC)", "Single-mode fiber with long-haul optics", "Cat 3 cable", "Coaxial cable"], answer: 0 },
@@ -223,6 +223,6 @@ Destination host unreachable.</div>
           options: ["Rollover (console) cable", "Crossover cable", "Fiber patch cable", "Coaxial cable"], answer: 0 }
       ],
       expl: "Short in-rack 10G runs use Cat 6a or a DAC. Copper 10G at 90 m requires Cat 6a (Cat 6 only reaches ~55 m). A 2 km inter-building run exceeds both copper and typical multimode distances, so single-mode fiber is the answer. SFP/SFP+ optics use LC connectors, and switch console ports use a rollover cable.",
-      tip: "Let distance and speed drive the media choice; over-specifying single-mode for a 3 m run wastes money — the exam tests judgment, not just maximums." }
+      tip: "Let distance and speed drive the media choice; over-specifying single-mode for a 3 m run wastes money, the exam tests judgment, not just maximums." }
   );
 })();

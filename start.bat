@@ -1,5 +1,5 @@
 @echo off
-rem Network+ Exam Simulator — local launcher
+rem Network+ Exam Simulator - local launcher
 cd /d "%~dp0"
 where python >nul 2>nul
 if %errorlevel%==0 (

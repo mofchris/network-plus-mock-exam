@@ -1,10 +1,10 @@
-/* Network+ Study Course — Unit 3: Implementation */
+/* Network+ Study Course - Unit 3: Implementation */
 (function () {
   const C = window.NETCOURSE = window.NETCOURSE || { units: [] };
 
   C.units.push({
     id: "u3",
-    title: "Unit 3 — Building the Network",
+    title: "Unit 3: Building the Network",
     blurb: "Switching, routing, wireless, and the appliances and cloud services that sit on top. This is the hands-on core of the job.",
     modules: [
 
@@ -12,27 +12,27 @@
 {
   id: "m3_1", title: "Switching, VLANs, and Spanning Tree", minutes: 16, level: "core",
   content: `
-<p>A switch has one job: get a frame to the right port and nowhere else. Everything else — VLANs,
-trunking, STP — exists to make that job work at scale and survive redundancy.</p>
+<p>A switch has one job: get a frame to the right port and nowhere else. Everything else (VLANs,
+trunking, STP) exists to make that job work at scale and survive redundancy.</p>
 
 <h2>How a switch learns</h2>
 <ol>
   <li>A frame arrives on port 3 with source MAC <code>AA:AA</code>. The switch writes "AA:AA is on port 3" into its <strong>MAC address table</strong> (CAM table).</li>
   <li>It looks up the <em>destination</em> MAC. If it's in the table, it forwards out that one port.</li>
-  <li>If the destination is unknown, it <strong>floods</strong> the frame out every port except the one it arrived on — and learns from the reply.</li>
+  <li>If the destination is unknown, it <strong>floods</strong> the frame out every port except the one it arrived on, and learns from the reply.</li>
   <li>Broadcasts are always flooded to every port in the VLAN.</li>
 </ol>
 <div class="keybox"><strong>Switches learn from source addresses and forward using destination
 addresses.</strong> That one sentence explains flooding, MAC flooding attacks, and MAC address table
 "flapping" all at once.</div>
 
-<h2>VLANs — one switch, many networks</h2>
+<h2>VLANs, one switch, many networks</h2>
 <p>By default every port on a switch is in one broadcast domain. A <strong>VLAN</strong> logically splits
 the switch so ports in VLAN 10 cannot talk to ports in VLAN 20 without a router. Benefits:</p>
 <ul>
-  <li><strong>Segmentation</strong> — smaller broadcast domains, less wasted CPU on every host.</li>
-  <li><strong>Security</strong> — HR traffic is separated from Guest traffic at Layer 2.</li>
-  <li><strong>Flexibility</strong> — group users logically (by department) regardless of where they physically sit.</li>
+  <li><strong>Segmentation</strong>: smaller broadcast domains, less wasted CPU on every host.</li>
+  <li><strong>Security</strong>: HR traffic is separated from Guest traffic at Layer 2.</li>
+  <li><strong>Flexibility</strong>: group users logically (by department) regardless of where they physically sit.</li>
 </ul>
 <p><strong>One VLAN = one broadcast domain = (normally) one IP subnet.</strong></p>
 
@@ -44,37 +44,37 @@ the switch so ports in VLAN 10 cannot talk to ports in VLAN 20 without a router.
   <tr><td>Connects to</td><td>PCs, printers, APs</td><td>Other switches, routers, hypervisors</td></tr>
 </table>
 <p>The <strong>native VLAN</strong> on a trunk is sent <em>untagged</em>. Leave it as VLAN 1 with user
-traffic on it and you invite a double-tagging VLAN-hopping attack — so change it to an unused VLAN.</p>
+traffic on it and you invite a double-tagging VLAN-hopping attack, so change it to an unused VLAN.</p>
 
 <h3>Getting between VLANs</h3>
 <ul>
-  <li><strong>Router-on-a-stick</strong> — one physical router link carrying a trunk, with a
+  <li><strong>Router-on-a-stick</strong>, one physical router link carrying a trunk, with a
       <strong>subinterface</strong> per VLAN. Cheap; the single link can bottleneck.</li>
-  <li><strong>Layer 3 switch (SVI)</strong> — the switch itself routes between VLANs at hardware speed.
+  <li><strong>Layer 3 switch (SVI)</strong>: the switch itself routes between VLANs at hardware speed.
       This is what modern networks do.</li>
 </ul>
 
-<h2>Spanning Tree Protocol — why redundancy doesn't kill you</h2>
+<h2>Spanning Tree Protocol: why redundancy doesn't kill you</h2>
 <p>Redundant switch links are essential. They are also lethal, because Layer 2 frames have <strong>no
-TTL</strong>. A broadcast entering a loop circulates forever, multiplying at every switch — a
+TTL</strong>. A broadcast entering a loop circulates forever, multiplying at every switch: a
 <strong>broadcast storm</strong> that saturates links and pins CPUs within seconds.</p>
 <p>STP (802.1D, and its faster successor RSTP 802.1w) solves this by building a loop-free tree:</p>
 <ol>
-  <li>Switches elect a <strong>root bridge</strong> — the one with the lowest bridge ID (priority, then MAC address).</li>
+  <li>Switches elect a <strong>root bridge</strong>: the one with the lowest bridge ID (priority, then MAC address).</li>
   <li>Every other switch finds its single best path to the root.</li>
-  <li>Redundant links are put into <strong>blocking</strong> state — physically connected, logically off.</li>
+  <li>Redundant links are put into <strong>blocking</strong> state: physically connected, logically off.</li>
   <li>If the active path fails, a blocked port transitions to forwarding, restoring connectivity automatically.</li>
 </ol>
 <div class="warnbox"><strong>Set the root bridge deliberately.</strong> If you don't set priorities, STP
-elects by lowest MAC address — which is usually the <em>oldest</em>, slowest switch in the building.
+elects by lowest MAC address, which is usually the <em>oldest</em>, slowest switch in the building.
 Lower the priority on your core switch so the tree is built where you want it.</div>
 
 <h3>Port features you must know</h3>
 <ul>
-  <li><strong>PortFast (edge port)</strong> — skips the listening/learning delay on access ports so PCs get DHCP immediately. Only ever on ports facing end devices.</li>
-  <li><strong>BPDU Guard</strong> — shuts a PortFast port down if it receives a BPDU (meaning someone plugged in a switch). PortFast + BPDU Guard is the standard pairing.</li>
-  <li><strong>Root Guard</strong> — prevents a downstream switch from becoming root.</li>
-  <li><strong>Port security</strong> — limits how many MAC addresses a port may learn; violation can shut the port.</li>
+  <li><strong>PortFast (edge port)</strong>: skips the listening/learning delay on access ports so PCs get DHCP immediately. Only ever on ports facing end devices.</li>
+  <li><strong>BPDU Guard</strong>: shuts a PortFast port down if it receives a BPDU (meaning someone plugged in a switch). PortFast + BPDU Guard is the standard pairing.</li>
+  <li><strong>Root Guard</strong>: prevents a downstream switch from becoming root.</li>
+  <li><strong>Port security</strong>: limits how many MAC addresses a port may learn; violation can shut the port.</li>
 </ul>
 
 <h2>Link aggregation (LACP)</h2>
@@ -95,8 +95,8 @@ exhaust it, and devices then fail to boot or cycle repeatedly.</p>
 <h2>What you must remember</h2>
 <ul>
   <li>Switches learn source MACs, forward on destination MACs, flood the unknown.</li>
-  <li>Access port = one VLAN, untagged. Trunk = many VLANs, 802.1Q tagged. Native VLAN is untagged — change it.</li>
-  <li>Layer 2 has no TTL, so loops are fatal — that's why STP exists. Set the root bridge manually.</li>
+  <li>Access port = one VLAN, untagged. Trunk = many VLANs, 802.1Q tagged. Native VLAN is untagged: change it.</li>
+  <li>Layer 2 has no TTL, so loops are fatal. That's why STP exists. Set the root bridge manually.</li>
   <li>PortFast + BPDU Guard on access ports. LACP bundles links.</li>
 </ul>`,
   quiz: [
@@ -129,7 +129,7 @@ exhaust it, and devices then fail to boot or cycle repeatedly.</p>
         "The newest switch wins",
         "The switch with the most ports wins"],
       answer: 0,
-      expl: "With equal priorities, the tiebreaker is the lowest MAC address — often the oldest switch. This is why you should set the priority manually on your core switch." },
+      expl: "With equal priorities, the tiebreaker is the lowest MAC address, often the oldest switch. This is why you should set the priority manually on your core switch." },
     { text: "Which two are true about VLANs? (Select TWO.)",
       choices: [
         "Each VLAN is a separate broadcast domain",
@@ -162,7 +162,7 @@ exhaust it, and devices then fail to boot or cycle repeatedly.</p>
 {
   id: "m3_2", title: "Routing: Getting Between Networks", minutes: 15, level: "core",
   content: `
-<p>Switches move frames <em>within</em> a network. Routers move packets <em>between</em> networks —
+<p>Switches move frames <em>within</em> a network. Routers move packets <em>between</em> networks: 
 and to do that, every router needs to answer one question: "for this destination, which way is out?"</p>
 
 <h2>The routing table</h2>
@@ -171,18 +171,18 @@ match</strong>: the most specific route wins.</p>
 <div class="worked"><h4>Which route is used for 10.1.5.20?</h4>
 <table>
   <tr><th>Route</th><th>Matches?</th></tr>
-  <tr><td>0.0.0.0/0 (default)</td><td>Yes — matches everything</td></tr>
+  <tr><td>0.0.0.0/0 (default)</td><td>Yes: matches everything</td></tr>
   <tr><td>10.0.0.0/8</td><td>Yes</td></tr>
-  <tr><td><strong>10.1.5.0/24</strong></td><td>Yes — and it's the most specific ✓</td></tr>
+  <tr><td><strong>10.1.5.0/24</strong></td><td>Yes, and it's the most specific ✓</td></tr>
 </table>
 <p>The <strong>/24</strong> wins because it's the longest (most specific) prefix. The default route,
-0.0.0.0/0, is the shortest possible match — the gateway of last resort, used only when nothing else matches.</p></div>
+0.0.0.0/0, is the shortest possible match: the gateway of last resort, used only when nothing else matches.</p></div>
 
 <h2>Static vs dynamic routing</h2>
 <table>
   <tr><th></th><th>Static</th><th>Dynamic</th></tr>
   <tr><td>Configured</td><td>By hand</td><td>Learned from neighbors automatically</td></tr>
-  <tr><td>Adapts to failure</td><td>No — you fix it manually</td><td>Yes — reconverges around the break</td></tr>
+  <tr><td>Adapts to failure</td><td>No (you fix it manually</td><td>Yes) reconverges around the break</td></tr>
   <tr><td>Overhead</td><td>None</td><td>CPU, memory, bandwidth</td></tr>
   <tr><td>Use for</td><td>Small networks, stub sites, default routes</td><td>Anything with redundancy or scale</td></tr>
 </table>
@@ -191,21 +191,21 @@ match</strong>: the most specific route wins.</p>
 <table>
   <tr><th>Protocol</th><th>Type</th><th>Metric</th><th>Scope</th></tr>
   <tr><td><strong>RIP</strong></td><td>Distance vector</td><td>Hop count (max 15)</td><td>Legacy, tiny networks</td></tr>
-  <tr><td><strong>OSPF</strong></td><td>Link state</td><td>Cost (from bandwidth)</td><td>Interior — the enterprise standard</td></tr>
-  <tr><td><strong>EIGRP</strong></td><td>Advanced distance vector</td><td>Bandwidth + delay</td><td>Interior — Cisco</td></tr>
-  <tr><td><strong>BGP</strong></td><td>Path vector</td><td>AS path + policy</td><td><strong>Exterior</strong> — between autonomous systems; runs the internet</td></tr>
+  <tr><td><strong>OSPF</strong></td><td>Link state</td><td>Cost (from bandwidth)</td><td>Interior: the enterprise standard</td></tr>
+  <tr><td><strong>EIGRP</strong></td><td>Advanced distance vector</td><td>Bandwidth + delay</td><td>Interior: Cisco</td></tr>
+  <tr><td><strong>BGP</strong></td><td>Path vector</td><td>AS path + policy</td><td><strong>Exterior</strong>, between autonomous systems; runs the internet</td></tr>
 </table>
 <p><strong>Link-state</strong> protocols (OSPF) flood link-state advertisements so every router builds an
 identical topology map, then runs Dijkstra's SPF algorithm to compute best paths. They converge fast.
-<strong>Distance-vector</strong> protocols (RIP) just tell neighbors "I can reach X in N hops" — routing
+<strong>Distance-vector</strong> protocols (RIP) just tell neighbors "I can reach X in N hops": routing
 by rumor. Slow, and prone to loops.</p>
 
-<h2>Administrative distance vs metric — the distinction that gets tested</h2>
+<h2>Administrative distance vs metric: the distinction that gets tested</h2>
 <div class="keybox">
 <p><strong>Administrative distance (AD)</strong> compares routes learned from <em>different sources</em>.
-Lower wins. It answers: "OSPF and a static route both know this network — whom do I trust?"</p>
+Lower wins. It answers: "OSPF and a static route both know this network, whom do I trust?"</p>
 <p><strong>Metric</strong> compares routes <em>within the same protocol</em>. It answers: "OSPF knows two
-paths to this network — which is better?"</p>
+paths to this network, which is better?"</p>
 </div>
 <table>
   <tr><th>Source</th><th>AD</th></tr>
@@ -215,13 +215,13 @@ paths to this network — which is better?"</p>
   <tr><td>OSPF</td><td>110</td></tr>
   <tr><td>RIP</td><td>120</td></tr>
 </table>
-<p>So a static route (AD 1) always beats OSPF (AD 110) for the same prefix — even if OSPF's path is
+<p>So a static route (AD 1) always beats OSPF (AD 110) for the same prefix, even if OSPF's path is
 genuinely better. That's a common cause of traffic taking a slow, "wrong" path: someone left a static
 route in place.</p>
 
 <h2>First Hop Redundancy (FHRP)</h2>
 <p>Your PC has exactly one default gateway. If that router dies, everything off-subnet dies with it.
-FHRPs — <strong>VRRP</strong> (standard), <strong>HSRP</strong>/<strong>GLBP</strong> (Cisco) — solve this:
+FHRPs (<strong>VRRP</strong> (standard), <strong>HSRP</strong>/<strong>GLBP</strong> (Cisco)) solve this:
 two routers share a <em>virtual</em> IP and MAC. Hosts point at the virtual address; if the active router
 fails, the standby takes over silently. Hosts never notice.</p>
 
@@ -296,33 +296,33 @@ and everyone must listen first. Every wireless problem you'll ever troubleshoot 
 <h2>The standards</h2>
 <table>
   <tr><th>Standard</th><th>Name</th><th>Band</th><th>Max (theoretical)</th></tr>
-  <tr><td>802.11b/g</td><td>—</td><td>2.4 GHz</td><td>11 / 54 Mbps</td></tr>
-  <tr><td>802.11a</td><td>—</td><td>5 GHz</td><td>54 Mbps</td></tr>
+  <tr><td>802.11b/g</td><td>-</td><td>2.4 GHz</td><td>11 / 54 Mbps</td></tr>
+  <tr><td>802.11a</td><td>-</td><td>5 GHz</td><td>54 Mbps</td></tr>
   <tr><td>802.11n</td><td>Wi-Fi 4</td><td>2.4 + 5 GHz</td><td>600 Mbps (MIMO)</td></tr>
   <tr><td>802.11ac</td><td>Wi-Fi 5</td><td><strong>5 GHz only</strong></td><td>~3.5 Gbps</td></tr>
   <tr><td>802.11ax</td><td>Wi-Fi 6</td><td>2.4 + 5 GHz</td><td>~9.6 Gbps (OFDMA)</td></tr>
   <tr><td>802.11ax</td><td><strong>Wi-Fi 6E</strong></td><td>adds <strong>6 GHz</strong></td><td>Same, more clean spectrum</td></tr>
 </table>
 
-<h2>Bands and channels — the heart of wireless design</h2>
+<h2>Bands and channels: the heart of wireless design</h2>
 <div class="keybox"><strong>2.4 GHz:</strong> travels farther, penetrates walls better, but is crowded
 (microwaves, Bluetooth, cordless phones) and has only <strong>three non-overlapping channels: 1, 6,
 and 11</strong>. That constraint drives every 2.4 GHz design decision.<br><br>
-<strong>5 GHz:</strong> many more non-overlapping channels, much less interference, higher throughput —
+<strong>5 GHz:</strong> many more non-overlapping channels, much less interference, higher throughput: 
 but shorter range and weaker wall penetration. Some channels require <strong>DFS</strong> (Dynamic
 Frequency Selection), meaning the AP must vacate the channel if it detects radar.</div>
 
 <h3>Interference: know the two kinds</h3>
 <ul>
-  <li><strong>Co-channel interference</strong> — two APs on the <em>same</em> channel with overlapping coverage. They don't corrupt each other; they take turns, so everyone's throughput halves. Fix with channel planning.</li>
-  <li><strong>Adjacent-channel interference</strong> — APs on <em>partially overlapping</em> channels (e.g. 1 and 3). This genuinely corrupts frames and is worse than co-channel. This is why you use 1, 6, 11 and nothing between.</li>
+  <li><strong>Co-channel interference</strong>, two APs on the <em>same</em> channel with overlapping coverage. They don't corrupt each other; they take turns, so everyone's throughput halves. Fix with channel planning.</li>
+  <li><strong>Adjacent-channel interference</strong>: APs on <em>partially overlapping</em> channels (e.g. 1 and 3). This genuinely corrupts frames and is worse than co-channel. This is why you use 1, 6, 11 and nothing between.</li>
 </ul>
 <div class="warnbox"><strong>Counterintuitive but tested:</strong> cranking AP transmit power to "improve
 coverage" usually makes things worse. It expands co-channel interference and creates a <em>sticky client</em>
-problem — laptops cling to a distant AP they can hear but can't reach at speed. Lower power + more APs is
+problem: laptops cling to a distant AP they can hear but can't reach at speed. Lower power + more APs is
 the professional answer.</div>
 
-<h2>Security — the only ranking you need</h2>
+<h2>Security: the only ranking you need</h2>
 <table>
   <tr><th>Method</th><th>Verdict</th></tr>
   <tr><td>Open / MAC filtering</td><td>No security. MAC addresses are trivially spoofed.</td></tr>
@@ -333,24 +333,24 @@ the professional answer.</div>
 </table>
 <p>Each of WPA2/WPA3 comes in two flavors:</p>
 <ul>
-  <li><strong>Personal (PSK)</strong> — one shared passphrase for everyone. When an employee leaves, you should change it for everyone. Nobody ever does.</li>
-  <li><strong>Enterprise (802.1X)</strong> — each user authenticates with their own credentials against a <strong>RADIUS</strong> server. Revoke one person without touching anyone else. <em>If a RADIUS server exists, Enterprise is always the right exam answer.</em></li>
+  <li><strong>Personal (PSK)</strong>, one shared passphrase for everyone. When an employee leaves, you should change it for everyone. Nobody ever does.</li>
+  <li><strong>Enterprise (802.1X)</strong>: each user authenticates with their own credentials against a <strong>RADIUS</strong> server. Revoke one person without touching anyone else. <em>If a RADIUS server exists, Enterprise is always the right exam answer.</em></li>
 </ul>
 <p>802.1X has three roles: <strong>supplicant</strong> (the client) → <strong>authenticator</strong> (the AP or switch) → <strong>authentication server</strong> (RADIUS).</p>
 
 <h2>Deployment concepts</h2>
 <ul>
-  <li><strong>SSID</strong> — the network name. <strong>BSSID</strong> — the AP radio's MAC address. Hiding the SSID is not security; it's trivially discovered.</li>
-  <li><strong>Site survey / heat map</strong> — measure real coverage before and after deployment. Plan for <strong>10–15% cell overlap</strong> so clients can roam without dropping.</li>
-  <li><strong>Wireless controller (WLC)</strong> — centrally manages many APs: channel and power assignment, firmware, and configuration.</li>
-  <li><strong>Mesh</strong> — APs backhaul wirelessly to each other where cabling is impractical. Each hop costs throughput.</li>
-  <li><strong>Captive portal</strong> — the "accept terms / log in" page for guest networks.</li>
+  <li><strong>SSID</strong>: the network name. <strong>BSSID</strong>: the AP radio's MAC address. Hiding the SSID is not security; it's trivially discovered.</li>
+  <li><strong>Site survey / heat map</strong>: measure real coverage before and after deployment. Plan for <strong>10–15% cell overlap</strong> so clients can roam without dropping.</li>
+  <li><strong>Wireless controller (WLC)</strong>: centrally manages many APs: channel and power assignment, firmware, and configuration.</li>
+  <li><strong>Mesh</strong>: APs backhaul wirelessly to each other where cabling is impractical. Each hop costs throughput.</li>
+  <li><strong>Captive portal</strong>: the "accept terms / log in" page for guest networks.</li>
 </ul>
 
 <h2>Signal metrics</h2>
 <ul>
-  <li><strong>RSSI</strong> — received signal strength, in dBm. It's negative; <em>closer to zero is stronger</em>. −50 dBm is excellent, −70 dBm is workable, −85 dBm is unusable.</li>
-  <li><strong>SNR</strong> — signal-to-noise ratio. This matters more than raw signal: a strong signal in a noisy room still performs terribly.</li>
+  <li><strong>RSSI</strong>: received signal strength, in dBm. It's negative; <em>closer to zero is stronger</em>. −50 dBm is excellent, −70 dBm is workable, −85 dBm is unusable.</li>
+  <li><strong>SNR</strong>: signal-to-noise ratio. This matters more than raw signal: a strong signal in a noisy room still performs terribly.</li>
 </ul>
 
 <h2>What you must remember</h2>
@@ -395,9 +395,9 @@ the professional answer.</div>
       expl: "Higher power expands each cell, increasing co-channel contention and encouraging clients to stay attached to APs they can hear but cannot reach at speed. The professional fix is more APs at lower power." },
     { text: "What does RSSI measure, and how should it be read?",
       choices: [
-        "Signal strength in dBm — values closer to zero are stronger",
-        "Data rate in Mbps — higher is better",
-        "Latency in milliseconds — lower is better",
+        "Signal strength in dBm: values closer to zero are stronger",
+        "Data rate in Mbps: higher is better",
+        "Latency in milliseconds: lower is better",
         "Channel width in MHz"],
       answer: 0,
       expl: "RSSI is expressed in negative dBm. −50 dBm is a very strong signal; −85 dBm is essentially unusable." }
@@ -416,7 +416,7 @@ The exam expects you to pick the right one for a stated requirement.</p>
   <tr><th>Device</th><th>What it does</th><th>Keyword in the question</th></tr>
   <tr><td><strong>Firewall</strong></td><td>Permits/denies traffic by rules; stateful firewalls track connections</td><td>"filter," "block," "allow only"</td></tr>
   <tr><td><strong>NGFW</strong></td><td>Adds application awareness, user identity, IPS, deep packet inspection</td><td>"identify the app, not just the port"</td></tr>
-  <tr><td><strong>IDS</strong></td><td><em>Detects</em> and alerts — passive, out of band</td><td>"alert," "monitor"</td></tr>
+  <tr><td><strong>IDS</strong></td><td><em>Detects</em> and alerts: passive, out of band</td><td>"alert," "monitor"</td></tr>
   <tr><td><strong>IPS</strong></td><td><em>Blocks</em> inline</td><td>"prevent," "drop the traffic"</td></tr>
   <tr><td><strong>Load balancer</strong></td><td>Distributes connections across a server pool; health checks; TLS offload</td><td>"scale," "distribute," "VIP"</td></tr>
   <tr><td><strong>Proxy</strong></td><td>Intermediates requests; can cache, filter, and log</td><td>"content filtering," "caching"</td></tr>
@@ -428,10 +428,10 @@ alerts you. IPS = <em>Prevention</em> = inline, stops it. One letter, completely
 
 <h2>VPNs</h2>
 <ul>
-  <li><strong>Site-to-site</strong> — connects whole networks (branch ↔ HQ) over the internet, typically with IPSec. Users don't know it's there.</li>
-  <li><strong>Client-to-site (remote access)</strong> — an individual user's device tunnels in, usually with SSL/TLS or IPSec.</li>
-  <li><strong>Split tunneling</strong> — only corporate traffic goes through the tunnel; internet traffic goes direct. Faster, but bypasses corporate inspection.</li>
-  <li><strong>Full tunnel</strong> — everything goes through the tunnel. Slower, but everything is inspected and protected.</li>
+  <li><strong>Site-to-site</strong>: connects whole networks (branch ↔ HQ) over the internet, typically with IPSec. Users don't know it's there.</li>
+  <li><strong>Client-to-site (remote access)</strong>: an individual user's device tunnels in, usually with SSL/TLS or IPSec.</li>
+  <li><strong>Split tunneling</strong>, only corporate traffic goes through the tunnel; internet traffic goes direct. Faster, but bypasses corporate inspection.</li>
+  <li><strong>Full tunnel</strong>: everything goes through the tunnel. Slower, but everything is inspected and protected.</li>
 </ul>
 <p>IPSec components: <strong>IKE</strong> negotiates keys, <strong>ESP</strong> encrypts and authenticates the
 payload, <strong>AH</strong> provides integrity only (rarely used, since it doesn't encrypt).</p>
@@ -449,24 +449,24 @@ payload, <strong>AH</strong> provides integrity only (rarely used, since it does
 
 <h3>Cloud networking pieces</h3>
 <ul>
-  <li><strong>VPC</strong> — your logically isolated network inside the provider's cloud.</li>
-  <li><strong>Internet gateway</strong> — lets VPC resources reach the internet. <strong>NAT gateway</strong> — lets private instances reach out without being reachable.</li>
-  <li><strong>Site-to-site VPN or Direct Connect</strong> — private connectivity between your data center and the VPC. <em>"Private connectivity to cloud" is always one of these two.</em></li>
+  <li><strong>VPC</strong>: your logically isolated network inside the provider's cloud.</li>
+  <li><strong>Internet gateway</strong>: lets VPC resources reach the internet. <strong>NAT gateway</strong>: lets private instances reach out without being reachable.</li>
+  <li><strong>Site-to-site VPN or Direct Connect</strong>: private connectivity between your data center and the VPC. <em>"Private connectivity to cloud" is always one of these two.</em></li>
 </ul>
 
 <h2>Modern architecture concepts</h2>
 <ul>
-  <li><strong>SDN</strong> — control plane separated from data plane, centralized in a programmable controller.</li>
-  <li><strong>SD-WAN</strong> — a controller steers traffic across MPLS, broadband, and LTE based on policy and real-time link quality. Transport-independent and application-aware.</li>
-  <li><strong>VXLAN</strong> — Layer 2 over Layer 3 with ~16 million segments; the data center overlay standard.</li>
-  <li><strong>Infrastructure as Code</strong> — device configuration expressed in version-controlled templates and deployed automatically. Consistent, auditable, and it makes a bad change deploy everywhere at once — which is why change control still matters.</li>
-  <li><strong>Zero trust</strong> — no implicit trust based on network location; verify every request.</li>
+  <li><strong>SDN</strong>: control plane separated from data plane, centralized in a programmable controller.</li>
+  <li><strong>SD-WAN</strong>: a controller steers traffic across MPLS, broadband, and LTE based on policy and real-time link quality. Transport-independent and application-aware.</li>
+  <li><strong>VXLAN</strong>: Layer 2 over Layer 3 with ~16 million segments; the data center overlay standard.</li>
+  <li><strong>Infrastructure as Code</strong>: device configuration expressed in version-controlled templates and deployed automatically. Consistent, auditable, and it makes a bad change deploy everywhere at once, which is why change control still matters.</li>
+  <li><strong>Zero trust</strong>, no implicit trust based on network location; verify every request.</li>
 </ul>
 
-<h2>QoS — when the pipe is full, who wins?</h2>
+<h2>QoS, when the pipe is full, who wins?</h2>
 <ul>
-  <li><strong>Classification and marking</strong> — tag traffic at the network edge (DSCP). Voice gets <strong>EF</strong> (Expedited Forwarding, DSCP 46).</li>
-  <li><strong>Queuing</strong> — priority queues serve voice first.</li>
+  <li><strong>Classification and marking</strong>: tag traffic at the network edge (DSCP). Voice gets <strong>EF</strong> (Expedited Forwarding, DSCP 46).</li>
+  <li><strong>Queuing</strong>: priority queues serve voice first.</li>
   <li><strong>Shaping</strong> buffers excess traffic to smooth it; <strong>policing</strong> drops or remarks it.</li>
 </ul>
 <p>Targets for voice: latency under ~150 ms one-way, jitter under ~30 ms, loss under 1%.</p>
@@ -487,7 +487,7 @@ payload, <strong>AH</strong> provides integrity only (rarely used, since it does
       expl: "Load balancers distribute connections across a server pool, monitor health, and commonly offload TLS from the backends." },
     { text: "Which cloud model leaves you responsible for the operating system, runtime, and applications?",
       choices: ["SaaS", "PaaS", "IaaS", "FaaS"], answer: 2,
-      expl: "IaaS gives you virtualized hardware; everything above it — OS, runtime, apps — is yours to manage. SaaS delivers a finished application." },
+      expl: "IaaS gives you virtualized hardware; everything above it (OS, runtime, apps) is yours to manage. SaaS delivers a finished application." },
     { text: "A remote employee needs their laptop to behave as though it were on the corporate LAN. Which solution fits?",
       choices: ["Site-to-site VPN", "Client-to-site (remote access) VPN", "A proxy server", "Port mirroring"], answer: 1,
       expl: "Client-to-site VPNs tunnel an individual device into the corporate network. Site-to-site connects entire networks, not single roaming users." },
@@ -563,7 +563,7 @@ payload, <strong>AH</strong> provides integrity only (rarely used, since it does
             "An exhausted DHCP scope",
             "A duplex mismatch"],
           answer: 0,
-          expl: "MAC flapping — the same address learned on different ports — is the classic signature of a bridging loop, usually with STP disabled or misconfigured." },
+          expl: "MAC flapping (the same address learned on different ports) is the classic signature of a bridging loop, usually with STP disabled or misconfigured." },
         { text: "Which VPN configuration sends only corporate traffic through the tunnel while internet traffic goes direct?",
           choices: ["Full tunnel", "Split tunnel", "Site-to-site", "Clientless"], answer: 1,
           expl: "Split tunneling is faster and reduces load on the concentrator, but internet traffic bypasses corporate inspection and filtering." },
@@ -618,7 +618,7 @@ payload, <strong>AH</strong> provides integrity only (rarely used, since it does
             "Data Link, Physical, Transport, Network",
             "Network, Physical, Data Link, Transport"],
           answer: 0,
-          expl: "Layer 1 Physical, Layer 2 Data Link, Layer 3 Network, Layer 4 Transport — bits, frames, packets, segments." }
+          expl: "Layer 1 Physical, Layer 2 Data Link, Layer 3 Network, Layer 4 Transport, bits, frames, packets, segments." }
       ]
     }
   });

@@ -1,10 +1,10 @@
-/* Network+ Study Course — Unit 1: Foundations */
+/* Network+ Study Course - Unit 1: Foundations */
 (function () {
   const C = window.NETCOURSE = window.NETCOURSE || { units: [] };
 
   C.units.push({
     id: "u1",
-    title: "Unit 1 — Foundations",
+    title: "Unit 1: Foundations",
     blurb: "Start here even if you've never touched a switch. What networks are, how the layered model works, and the physical media everything runs on.",
     modules: [
 
@@ -12,22 +12,22 @@
 {
   id: "m1_1", title: "What a Network Actually Is", minutes: 12, level: "foundation",
   content: `
-<p>A network is just two or more devices that can exchange data. Everything else — the
-protocols, the acronyms, the $50,000 switches — exists to solve problems that appear when
+<p>A network is just two or more devices that can exchange data. Everything else (the
+protocols, the acronyms, the $50,000 switches) exists to solve problems that appear when
 you scale that simple idea up.</p>
 
 <h2>The pieces</h2>
 <p>Every network is built from four kinds of things:</p>
 <ul>
-  <li><strong>Hosts (endpoints)</strong> — devices that produce or consume data: PCs, phones, servers, printers, cameras.</li>
-  <li><strong>Media</strong> — what carries the signal: copper cable, fiber, or radio waves.</li>
-  <li><strong>Intermediary devices</strong> — things that move data between hosts: switches, routers, firewalls, access points.</li>
-  <li><strong>Protocols</strong> — the agreed rules for how data is formatted and exchanged. Hardware without agreed rules is just expensive plastic.</li>
+  <li><strong>Hosts (endpoints)</strong>: devices that produce or consume data: PCs, phones, servers, printers, cameras.</li>
+  <li><strong>Media</strong>: what carries the signal: copper cable, fiber, or radio waves.</li>
+  <li><strong>Intermediary devices</strong>: things that move data between hosts: switches, routers, firewalls, access points.</li>
+  <li><strong>Protocols</strong>: the agreed rules for how data is formatted and exchanged. Hardware without agreed rules is just expensive plastic.</li>
 </ul>
 
 <h2>Clients, servers, and peers</h2>
 <p>In a <strong>client-server</strong> model, a server provides a resource (files, web pages,
-authentication) and clients request it. This centralizes control, backup, and security — which
+authentication) and clients request it. This centralizes control, backup, and security, which
 is why every business network looks like this.</p>
 <p>In a <strong>peer-to-peer</strong> model, each device is both client and server. It's simple
 and cheap for a handful of machines, but it becomes ungovernable fast: no central accounts,
@@ -66,10 +66,10 @@ the package reaches your building, the doorman uses your name. Networks work exa
 
 <h2>Bandwidth, throughput, and latency</h2>
 <ul>
-  <li><strong>Bandwidth</strong> — the theoretical maximum capacity of a link (1 Gbps).</li>
-  <li><strong>Throughput</strong> — what you actually get (often far less, thanks to overhead, errors, and congestion).</li>
-  <li><strong>Latency</strong> — the delay for data to make the trip, measured in milliseconds.</li>
-  <li><strong>Jitter</strong> — the <em>variation</em> in latency. Steady 80 ms is fine for a call; latency bouncing between 20 ms and 200 ms is not.</li>
+  <li><strong>Bandwidth</strong>: the theoretical maximum capacity of a link (1 Gbps).</li>
+  <li><strong>Throughput</strong>: what you actually get (often far less, thanks to overhead, errors, and congestion).</li>
+  <li><strong>Latency</strong>: the delay for data to make the trip, measured in milliseconds.</li>
+  <li><strong>Jitter</strong>: the <em>variation</em> in latency. Steady 80 ms is fine for a call; latency bouncing between 20 ms and 200 ms is not.</li>
 </ul>
 <div class="exambox"><strong>Exam angle:</strong> a link can be at 15% utilization and still deliver
 terrible voice quality, because voice cares about latency and jitter, not raw bandwidth. Expect a
@@ -77,7 +77,7 @@ question that tries to make you blame bandwidth when the answer is jitter.</div>
 
 <h2>What you must remember</h2>
 <ul>
-  <li>Hosts, media, intermediary devices, protocols — that's every network.</li>
+  <li>Hosts, media, intermediary devices, protocols: that's every network.</li>
   <li>LAN = you own it; WAN = you rent it.</li>
   <li>MAC = local identity (switches). IP = global address (routers).</li>
   <li>Bandwidth ≠ throughput. Latency and jitter matter independently of both.</li>
@@ -103,7 +103,7 @@ question that tries to make you blame bandwidth when the answer is jitter.</div>
         "Bandwidth is measured in milliseconds",
         "Throughput cannot be affected by congestion"],
       answer: [0, 2],
-      expl: "Bandwidth is capacity; throughput is what you actually achieve after overhead, errors, and congestion. Delay is measured in milliseconds — that's latency, not bandwidth." },
+      expl: "Bandwidth is capacity; throughput is what you actually achieve after overhead, errors, and congestion. Delay is measured in milliseconds: that's latency, not bandwidth." },
     { text: "Which device uses MAC addresses to make its forwarding decisions?",
       choices: ["Router", "Switch", "Firewall (Layer 3 rules)", "Modem"], answer: 1,
       expl: "Switches forward frames using MAC addresses within a local segment. Routers forward packets between networks using IP addresses." }
@@ -114,7 +114,7 @@ question that tries to make you blame bandwidth when the answer is jitter.</div>
 {
   id: "m1_2", title: "The OSI Model and How Data Really Moves", minutes: 15, level: "foundation",
   content: `
-<p>The OSI model is a seven-layer map of how communication works. It is not software you install —
+<p>The OSI model is a seven-layer map of how communication works. It is not software you install: 
 it's a shared vocabulary. When someone says "that's a Layer 2 problem," they've told you exactly
 where to look. CompTIA tests this relentlessly, and more importantly, it is the backbone of
 every troubleshooting decision you will ever make.</p>
@@ -122,7 +122,7 @@ every troubleshooting decision you will ever make.</p>
 <h2>The seven layers (top down)</h2>
 <table>
   <tr><th>#</th><th>Layer</th><th>Data unit</th><th>What lives here</th></tr>
-  <tr><td>7</td><td>Application</td><td>Data</td><td>HTTP, DNS, SMTP, FTP — the protocols apps speak</td></tr>
+  <tr><td>7</td><td>Application</td><td>Data</td><td>HTTP, DNS, SMTP, FTP: the protocols apps speak</td></tr>
   <tr><td>6</td><td>Presentation</td><td>Data</td><td>Encryption (TLS), encoding, compression</td></tr>
   <tr><td>5</td><td>Session</td><td>Data</td><td>Setting up, maintaining, tearing down conversations</td></tr>
   <tr><td>4</td><td>Transport</td><td><strong>Segment</strong></td><td>TCP, UDP, <strong>port numbers</strong></td></tr>
@@ -134,14 +134,14 @@ every troubleshooting decision you will ever make.</p>
 <strong>T</strong>hrow <strong>S</strong>ausage <strong>P</strong>izza <strong>A</strong>way.</p>
 
 <h2>Encapsulation: what actually happens when you load a web page</h2>
-<p>Data doesn't teleport. Each layer wraps the layer above it in its own header — like putting a
+<p>Data doesn't teleport. Each layer wraps the layer above it in its own header, like putting a
 letter in an envelope, the envelope in a box, and the box in a shipping container.</p>
 <ol>
   <li><strong>Layer 7</strong>: your browser writes an HTTP request: <code>GET /index.html</code>.</li>
   <li><strong>Layer 4</strong>: TCP adds a header with source port (random, e.g. 51234) and destination port (443). Now it's a <strong>segment</strong>.</li>
   <li><strong>Layer 3</strong>: IP adds source IP (your PC) and destination IP (the server). Now it's a <strong>packet</strong>.</li>
   <li><strong>Layer 2</strong>: Ethernet adds source MAC (your NIC) and destination MAC (<em>your router's</em>, not the server's!). Now it's a <strong>frame</strong>.</li>
-  <li><strong>Layer 1</strong>: the frame becomes electrical pulses, light, or radio waves — <strong>bits</strong>.</li>
+  <li><strong>Layer 1</strong>: the frame becomes electrical pulses, light, or radio waves, <strong>bits</strong>.</li>
 </ol>
 <p>At the far end, the process runs in reverse (de-encapsulation): each layer strips its own header
 and hands the contents up.</p>
@@ -164,9 +164,9 @@ frame to the next hop. At every hop, the MAC addresses are rewritten; the IP add
 <p>The layers give you a search algorithm. Instead of guessing, you bisect:</p>
 <ul>
   <li>No link light? <strong>Layer 1.</strong> No amount of IP configuration will save you.</li>
-  <li>Link up but the interface shows CRC errors and late collisions? <strong>Layer 1/2</strong> — bad cable or duplex mismatch.</li>
+  <li>Link up but the interface shows CRC errors and late collisions? <strong>Layer 1/2</strong>: bad cable or duplex mismatch.</li>
   <li>Can ping by IP but not by name? Layers 1–3 are proven fine. It's <strong>DNS</strong> (Layer 7).</li>
-  <li>Can ping the server but the app won't connect on port 443? Layers 1–3 fine — check the <strong>service and firewall (Layer 4+)</strong>.</li>
+  <li>Can ping the server but the app won't connect on port 443? Layers 1–3 fine. Check the <strong>service and firewall (Layer 4+)</strong>.</li>
 </ul>
 <div class="exambox"><strong>Exam angle:</strong> "bottom-up" troubleshooting starts at Layer 1 and
 works up; "top-down" starts at the application. "Divide and conquer" starts in the middle (usually
@@ -177,7 +177,7 @@ a ping, at Layer 3) and moves in whichever direction the result points. Know all
   <li>Layers 1–4 by number, their data units, and their devices. Segment (4), Packet (3), Frame (2), Bit (1).</li>
   <li>Encapsulation adds headers going down; de-encapsulation strips them going up.</li>
   <li>IP addresses survive end-to-end. MAC addresses are rewritten at every hop.</li>
-  <li>What succeeds tells you as much as what fails — it eliminates all the layers beneath it.</li>
+  <li>What succeeds tells you as much as what fails. It eliminates all the layers beneath it.</li>
 </ul>`,
   quiz: [
     { text: "At which OSI layer do port numbers operate?",
@@ -193,9 +193,9 @@ a ping, at Layer 3) and moves in whichever direction the result points. Know all
         "A broadcast MAC address",
         "The PC's own MAC address"],
       answer: 1,
-      expl: "The destination IP is the server, but the destination MAC is the next hop — the default gateway. MAC addresses are rewritten at each hop while the IP addresses remain end-to-end." },
+      expl: "The destination IP is the server, but the destination MAC is the next hop, the default gateway. MAC addresses are rewritten at each hop while the IP addresses remain end-to-end." },
     { text: "A user cannot reach a website by name but CAN reach it by IP address. Which layer is the problem MOST likely at?",
-      choices: ["Layer 1 (Physical)", "Layer 2 (Data Link)", "Layer 3 (Network)", "Layer 7 (Application — DNS)"], answer: 3,
+      choices: ["Layer 1 (Physical)", "Layer 2 (Data Link)", "Layer 3 (Network)", "Layer 7 (Application, DNS)"], answer: 3,
       expl: "Reaching it by IP proves Layers 1 through 3 are working. Only name resolution fails, and DNS is an application-layer service." },
     { text: "Which two are true about encapsulation? (Select TWO.)",
       choices: [
@@ -225,17 +225,17 @@ a ping, at Layer 3) and moves in whichever direction the result points. Know all
   id: "m1_3", title: "Topologies, Traffic Types, and Network Architecture", minutes: 12, level: "foundation",
   content: `
 <p>Topology describes how devices are arranged and connected. There's a <em>physical</em> topology
-(where the cables actually run) and a <em>logical</em> topology (how data actually flows) — and they
+(where the cables actually run) and a <em>logical</em> topology (how data actually flows), and they
 often differ.</p>
 
 <h2>The topologies</h2>
 <table>
   <tr><th>Topology</th><th>How it works</th><th>Weakness</th></tr>
-  <tr><td><strong>Star</strong></td><td>Every node connects to a central device (a switch)</td><td>The central device is a single point of failure — but one bad cable affects only one node</td></tr>
+  <tr><td><strong>Star</strong></td><td>Every node connects to a central device (a switch)</td><td>The central device is a single point of failure, but one bad cable affects only one node</td></tr>
   <tr><td><strong>Bus</strong></td><td>All devices share one backbone cable</td><td>One break kills the entire segment. Obsolete.</td></tr>
   <tr><td><strong>Ring</strong></td><td>Each device connects to two neighbors, forming a loop</td><td>A single break can bring down the ring unless it's dual-ring</td></tr>
   <tr><td><strong>Mesh</strong></td><td>Devices interconnect with multiple paths (full = everything to everything)</td><td>Extremely resilient, but cost and cabling explode: n(n−1)/2 links</td></tr>
-  <tr><td><strong>Hybrid</strong></td><td>A mix — e.g. star-of-stars</td><td>What real networks actually are</td></tr>
+  <tr><td><strong>Hybrid</strong></td><td>A mix: e.g. star-of-stars</td><td>What real networks actually are</td></tr>
 </table>
 <p>Modern Ethernet LANs are <strong>physical stars</strong> (everything home-runs to a switch), and
 WAN cores are often partial meshes for redundancy.</p>
@@ -243,46 +243,46 @@ WAN cores are often partial meshes for redundancy.</p>
 <h2>Three-tier architecture</h2>
 <p>Enterprise campus networks are built in layers, each with one job:</p>
 <ul>
-  <li><strong>Access layer</strong> — where end devices plug in. Lots of ports, PoE, port security, VLAN assignment.</li>
-  <li><strong>Distribution (aggregation) layer</strong> — aggregates access switches; this is where routing between VLANs and policy (ACLs, QoS marking) live.</li>
-  <li><strong>Core layer</strong> — the high-speed backbone. Its only job is to forward packets as fast as possible. You do <em>not</em> put heavy filtering here; it adds latency and risk.</li>
+  <li><strong>Access layer</strong>: where end devices plug in. Lots of ports, PoE, port security, VLAN assignment.</li>
+  <li><strong>Distribution (aggregation) layer</strong>: aggregates access switches; this is where routing between VLANs and policy (ACLs, QoS marking) live.</li>
+  <li><strong>Core layer</strong>: the high-speed backbone. Its only job is to forward packets as fast as possible. You do <em>not</em> put heavy filtering here; it adds latency and risk.</li>
 </ul>
-<p>In smaller networks, core and distribution merge into one layer — a <strong>collapsed core</strong>.</p>
+<p>In smaller networks, core and distribution merge into one layer: a <strong>collapsed core</strong>.</p>
 <div class="exambox"><strong>Exam angle:</strong> "Access = user ports. Distribution = aggregation and
 policy. Core = fast and dumb." If an answer suggests deep packet inspection in the core, it's wrong.</div>
 
 <h2>Other architectures you must recognize</h2>
 <ul>
-  <li><strong>Spine-and-leaf</strong> — the data center standard. Every leaf switch connects to every spine switch, so any server is exactly two hops from any other. Predictable latency, easy to scale by adding spines.</li>
-  <li><strong>Software-Defined Networking (SDN)</strong> — separates the <em>control plane</em> (the decision-making) from the <em>data plane</em> (the actual forwarding) and centralizes control in a controller you can program via API.</li>
-  <li><strong>SD-WAN</strong> — a controller applies application-aware policy across multiple transports (MPLS, broadband, LTE), steering traffic based on real-time link quality.</li>
-  <li><strong>VXLAN</strong> — encapsulates Layer 2 frames inside UDP so you can stretch a Layer 2 segment across a routed Layer 3 network. It also raises the segment limit from 4,094 VLANs to ~16 million.</li>
+  <li><strong>Spine-and-leaf</strong>: the data center standard. Every leaf switch connects to every spine switch, so any server is exactly two hops from any other. Predictable latency, easy to scale by adding spines.</li>
+  <li><strong>Software-Defined Networking (SDN)</strong>: separates the <em>control plane</em> (the decision-making) from the <em>data plane</em> (the actual forwarding) and centralizes control in a controller you can program via API.</li>
+  <li><strong>SD-WAN</strong>: a controller applies application-aware policy across multiple transports (MPLS, broadband, LTE), steering traffic based on real-time link quality.</li>
+  <li><strong>VXLAN</strong>: encapsulates Layer 2 frames inside UDP so you can stretch a Layer 2 segment across a routed Layer 3 network. It also raises the segment limit from 4,094 VLANs to ~16 million.</li>
 </ul>
 
 <h2>Traffic types: who receives the message?</h2>
 <table>
   <tr><th>Type</th><th>Recipients</th><th>Example</th></tr>
   <tr><td><strong>Unicast</strong></td><td>Exactly one</td><td>You loading a web page</td></tr>
-  <tr><td><strong>Broadcast</strong></td><td>Everyone on the segment</td><td>An ARP request; DHCP DISCOVER. IPv4 only — <strong>IPv6 has no broadcast</strong>.</td></tr>
+  <tr><td><strong>Broadcast</strong></td><td>Everyone on the segment</td><td>An ARP request; DHCP DISCOVER. IPv4 only: <strong>IPv6 has no broadcast</strong>.</td></tr>
   <tr><td><strong>Multicast</strong></td><td>A subscribed group</td><td>A video stream sent once to many subscribers (224.0.0.0/4)</td></tr>
   <tr><td><strong>Anycast</strong></td><td>The nearest of several identical hosts</td><td>Public DNS like 8.8.8.8, announced from many sites at once</td></tr>
 </table>
 <div class="keybox"><strong>Broadcast domains matter enormously.</strong> Every device in a broadcast
 domain must process every broadcast. Too many devices in one domain = wasted CPU and bandwidth on
 every host. A <strong>switch</strong> forwards broadcasts (one big broadcast domain), but a
-<strong>router</strong> blocks them. VLANs let one switch create several broadcast domains — which
+<strong>router</strong> blocks them. VLANs let one switch create several broadcast domains, which
 is exactly why VLANs exist.</div>
 
 <h2>Collision domains vs. broadcast domains</h2>
 <ul>
-  <li><strong>Collision domain</strong> — where two devices can transmit at once and corrupt each other. On a modern full-duplex switch, <em>every port is its own collision domain</em>, so collisions basically don't happen. Hubs put everyone in one collision domain, which is why they're extinct.</li>
-  <li><strong>Broadcast domain</strong> — how far a broadcast travels. One VLAN = one broadcast domain. Routers are the boundary.</li>
+  <li><strong>Collision domain</strong>: where two devices can transmit at once and corrupt each other. On a modern full-duplex switch, <em>every port is its own collision domain</em>, so collisions basically don't happen. Hubs put everyone in one collision domain, which is why they're extinct.</li>
+  <li><strong>Broadcast domain</strong>: how far a broadcast travels. One VLAN = one broadcast domain. Routers are the boundary.</li>
 </ul>
 
 <h2>What you must remember</h2>
 <ul>
   <li>Modern LANs are physical stars; data centers use spine-and-leaf.</li>
-  <li>Access / Distribution / Core — and the core stays fast and simple.</li>
+  <li>Access / Distribution / Core, and the core stays fast and simple.</li>
   <li>Switch ports = separate collision domains. Router interfaces = separate broadcast domains. VLANs = broadcast domains on one switch.</li>
   <li>Unicast (one), broadcast (all, IPv4 only), multicast (subscribed group), anycast (nearest).</li>
 </ul>`,
@@ -323,7 +323,7 @@ is exactly why VLANs exist.</div>
 {
   id: "m1_4", title: "Cables, Connectors, and Physical Media", minutes: 14, level: "foundation",
   content: `
-<p>Layer 1 is where a shocking share of real outages live. Learn the numbers here — the exam tests
+<p>Layer 1 is where a shocking share of real outages live. Learn the numbers here: the exam tests
 them directly, and every "intermittent weirdness" ticket in your career starts with "is it the cable?"</p>
 
 <h2>Copper: twisted pair</h2>
@@ -336,16 +336,16 @@ performance = higher category.</p>
   <tr><td><strong>Cat 6a</strong></td><td><strong>10 Gbps</strong></td><td><strong>100 m</strong></td><td>The answer for 10G over copper at full distance</td></tr>
   <tr><td>Cat 7 / Cat 8</td><td>10–40 Gbps</td><td>100 m / 30 m</td><td>Cat 8 is short-run data center only</td></tr>
 </table>
-<div class="warnbox"><strong>The 100-meter rule:</strong> that's the total channel — typically 90 m of
+<div class="warnbox"><strong>The 100-meter rule:</strong> that's the total channel, typically 90 m of
 solid horizontal cable plus 10 m of stranded patch cables. Exceed it and you get intermittent,
 maddening errors rather than a clean failure.</div>
 
 <h3>Shielding and terminations</h3>
 <ul>
-  <li><strong>UTP</strong> (Unshielded) — standard office cable.</li>
-  <li><strong>STP/FTP</strong> (Shielded/Foiled) — adds a shield for high-EMI environments (factory floors, near motors). The shield <em>must</em> be grounded or it makes things worse.</li>
-  <li><strong>Plenum-rated</strong> — fire-safe jacket required in air-handling spaces (above drop ceilings). Non-plenum cable there is a code violation — it emits toxic smoke when burning.</li>
-  <li><strong>T568A / T568B</strong> — the two pin-out standards. Use the same one at both ends (B is more common). Different standards at each end = a crossover cable.</li>
+  <li><strong>UTP</strong> (Unshielded): standard office cable.</li>
+  <li><strong>STP/FTP</strong> (Shielded/Foiled): adds a shield for high-EMI environments (factory floors, near motors). The shield <em>must</em> be grounded or it makes things worse.</li>
+  <li><strong>Plenum-rated</strong>: fire-safe jacket required in air-handling spaces (above drop ceilings). Non-plenum cable there is a code violation. It emits toxic smoke when burning.</li>
+  <li><strong>T568A / T568B</strong>: the two pin-out standards. Use the same one at both ends (B is more common). Different standards at each end = a crossover cable.</li>
 </ul>
 
 <h2>Fiber optic</h2>
@@ -361,20 +361,20 @@ maddening errors rather than a clean failure.</div>
 <p>Fiber is immune to EMI, doesn't radiate a signal (harder to tap), and covers distances copper
 can't touch. It's also fragile: mind the <strong>bend radius</strong> and keep the ends spotlessly clean.</p>
 
-<h3>Connectors — know these on sight</h3>
+<h3>Connectors: know these on sight</h3>
 <ul>
-  <li><strong>LC</strong> — small, latching. The standard on SFP/SFP+ optics. ("Little Connector")</li>
-  <li><strong>SC</strong> — larger, square, push-pull. ("Square Connector")</li>
-  <li><strong>ST</strong> — round bayonet, twist-lock. ("Stick and Twist")</li>
-  <li><strong>MPO/MTP</strong> — multi-fiber ribbon connector for 40G/100G trunks.</li>
-  <li><strong>RJ45</strong> — 8-pin copper Ethernet. <strong>RJ11</strong> — 6-pin telephone. <strong>BNC</strong> — legacy coax. <strong>F-type</strong> — coax for cable modems.</li>
+  <li><strong>LC</strong>: small, latching. The standard on SFP/SFP+ optics. ("Little Connector")</li>
+  <li><strong>SC</strong>: larger, square, push-pull. ("Square Connector")</li>
+  <li><strong>ST</strong>: round bayonet, twist-lock. ("Stick and Twist")</li>
+  <li><strong>MPO/MTP</strong>: multi-fiber ribbon connector for 40G/100G trunks.</li>
+  <li><strong>RJ45</strong>: 8-pin copper Ethernet. <strong>RJ11</strong>: 6-pin telephone. <strong>BNC</strong>: legacy coax. <strong>F-type</strong>: coax for cable modems.</li>
 </ul>
 
 <h2>Transceivers</h2>
 <p>Modular switches use pluggable optics so one port can be copper or fiber, short or long range:</p>
 <ul>
-  <li><strong>SFP</strong> — 1 Gbps. <strong>SFP+</strong> — 10 Gbps. <strong>QSFP+</strong> — 40 Gbps. <strong>QSFP28</strong> — 100 Gbps.</li>
-  <li><strong>DAC</strong> (Direct Attach Copper) — a cheap fixed cable with transceivers on both ends, for very short in-rack runs.</li>
+  <li><strong>SFP</strong>: 1 Gbps. <strong>SFP+</strong>: 10 Gbps. <strong>QSFP+</strong>: 40 Gbps. <strong>QSFP28</strong>: 100 Gbps.</li>
+  <li><strong>DAC</strong> (Direct Attach Copper): a cheap fixed cable with transceivers on both ends, for very short in-rack runs.</li>
 </ul>
 <div class="warnbox"><strong>Wavelength must match.</strong> An 850 nm multimode optic will not talk to a
 1310 nm single-mode optic, even though the connectors fit perfectly. Mismatched optics are a classic
@@ -382,21 +382,21 @@ can't touch. It's also fragile: mind the <strong>bend radius</strong> and keep t
 
 <h2>Copper's failure modes (and what they look like)</h2>
 <ul>
-  <li><strong>Attenuation</strong> — the signal weakens over distance. Symptom: errors on long runs.</li>
-  <li><strong>Crosstalk</strong> — signal bleeding between pairs, often from untwisting too much wire at the termination.</li>
-  <li><strong>EMI</strong> — interference from motors, fluorescent lights, power cables run in parallel.</li>
-  <li><strong>Open / short</strong> — a broken conductor, or two touching.</li>
-  <li><strong>Split pair</strong> — wires connected in the right pin order but using the wrong <em>pairs</em>. It passes a simple continuity test but fails at speed — a nasty, subtle fault.</li>
+  <li><strong>Attenuation</strong>: the signal weakens over distance. Symptom: errors on long runs.</li>
+  <li><strong>Crosstalk</strong>: signal bleeding between pairs, often from untwisting too much wire at the termination.</li>
+  <li><strong>EMI</strong>: interference from motors, fluorescent lights, power cables run in parallel.</li>
+  <li><strong>Open / short</strong>: a broken conductor, or two touching.</li>
+  <li><strong>Split pair</strong>: wires connected in the right pin order but using the wrong <em>pairs</em>. It passes a simple continuity test but fails at speed: a nasty, subtle fault.</li>
 </ul>
 <div class="exambox"><strong>Exam angle:</strong> a gigabit link that negotiates at only 100 Mbps often
-means a damaged pair — 1000BASE-T needs all four pairs, while 100BASE-TX needs only two. That's a
+means a damaged pair: 1000BASE-T needs all four pairs, while 100BASE-TX needs only two. That's a
 free point if you know it.</div>
 
 <h2>What you must remember</h2>
 <ul>
   <li>Cat 5e = 1G, Cat 6 = 10G only to 55 m, <strong>Cat 6a = 10G to 100 m</strong>. Copper's limit is 100 m, period.</li>
   <li>Single-mode = long distance. Multimode = short. LC on SFPs; SC square; ST twist; MPO for 40/100G.</li>
-  <li>Plenum cable in air-handling spaces. Shielded cable in high-EMI areas — and ground the shield.</li>
+  <li>Plenum cable in air-handling spaces. Shielded cable in high-EMI areas, and ground the shield.</li>
   <li>Gigabit needs all four pairs. Speed dropping to 100 Mbps = suspect the cable.</li>
 </ul>`,
   quiz: [
@@ -414,7 +414,7 @@ free point if you know it.</div>
       expl: "Plenum spaces require fire-rated cable with a low-smoke jacket. Standard PVC cable in a plenum is a fire-code violation because of the toxic smoke it releases when burned." },
     { text: "A gigabit-capable PC and switch negotiate only 100 Mbps on a new cable run. What is the MOST likely cause?",
       choices: [
-        "A damaged or improperly terminated pair — 1000BASE-T requires all four pairs",
+        "A damaged or improperly terminated pair: 1000BASE-T requires all four pairs",
         "The DNS server is misconfigured",
         "The switch has too many VLANs",
         "The cable is too short"],
@@ -498,7 +498,7 @@ free point if you know it.</div>
           expl: "VXLAN encapsulates Layer 2 frames in UDP over an IP underlay and uses a 24-bit VNI, allowing about 16 million segments versus 4,094 VLAN IDs." },
         { text: "A VoIP call sounds choppy while the link sits at 18% utilization. Which metric is the MOST likely culprit?",
           choices: ["Bandwidth", "Jitter", "MAC table size", "Cable category"], answer: 1,
-          expl: "Jitter — variation in packet delay — degrades voice even on lightly loaded links. Utilization alone tells you nothing about delay stability." },
+          expl: "Jitter (variation in packet delay) degrades voice even on lightly loaded links. Utilization alone tells you nothing about delay stability." },
         { text: "Which troubleshooting approach begins at the Physical layer and works upward?",
           choices: ["Top-down", "Bottom-up", "Divide and conquer", "Escalate first"], answer: 1,
           expl: "Bottom-up starts at Layer 1 (cables, link lights) and works up the stack. It is the right instinct when physical symptoms are present." },
