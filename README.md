@@ -35,6 +35,24 @@ leaves your browser.
   troubleshooting methodology.
 - **Missed-questions deck** and score history with a pass-line trend chart.
 
+
+## The study course
+
+The app now includes a **20-module course** that takes you from first principles to exam-ready:
+
+| Unit | Covers |
+|---|---|
+| 1. Foundations | What a network is, the OSI model and encapsulation, topologies and traffic types, cables and connectors |
+| 2. Addressing & Protocols | Binary, IPv4, **subnetting from scratch**, IPv6, ports, DNS, DHCP |
+| 3. Building the Network | Switching/VLANs/STP, routing, wireless, appliances and cloud |
+| 4. Operations & Security | Monitoring, availability and backups, security fundamentals, attacks and mitigations |
+| 5. Troubleshooting | Methodology and tools, the symptom-to-cause map, command output analysis, PBQ tactics |
+
+Each module ends with a quiz you must pass at **75%** to unlock the next one, and each unit ends
+with a **cumulative checkpoint** that also re-tests earlier units. The full mock exam unlocks when
+the course is complete. Every quiz question has a full explanation; retakes are unlimited and your
+best score is kept.
+
 ## Running locally
 
 - Easiest: double-click `index.html` — everything works from the file system.

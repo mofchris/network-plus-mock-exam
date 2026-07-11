@@ -156,8 +156,18 @@
     const tile = (em, h, p, fn) => grid.appendChild(NP.el("button", { class: "home-tile", onclick: fn },
       NP.el("div", { class: "em" }, em), NP.el("h3", null, h), NP.el("p", null, p)));
 
-    tile("🖥️", "Take a Full Mock Exam",
-      "75 questions, 90 minutes, PBQs first — domain-weighted like the real N10-009, with flag-for-review and the 720 passing line.",
+    const cpct = NP.course ? NP.course.percentComplete() : 0;
+    const cdone = NP.course ? NP.course.courseComplete() : false;
+    tile("📘", "Study Course" + (cpct > 0 ? ` — ${cpct}% complete` : ""),
+      cdone
+        ? "Course complete. Every module and checkpoint passed — you're ready for the mock exam."
+        : "20 modules from first principles to exam-ready, each with a quiz you must pass to continue, plus a cumulative checkpoint at the end of every unit.",
+      () => NP.show(NP.screens.course));
+
+    tile(cdone ? "🖥️" : "🔒", "Take a Full Mock Exam",
+      cdone
+        ? "Course complete — you've earned it. 75 questions, 90 minutes, PBQs first, domain-weighted like the real N10-009, with the 720 passing line."
+        : `Unlocks when the study course is complete (${cpct}% done). 75 questions, 90 minutes, PBQs first, scored against the 720 passing line.`,
       () => NP.exam.startIntro());
     tile("🎓", "Tutor Mode",
       "Untimed practice by domain, difficulty, and type with instant feedback and full explanations — including PBQs.",

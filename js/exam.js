@@ -137,9 +137,25 @@
   function save() { NP.store.data.inprogress = X; NP.store.save(); }
   function stopTicker() { if (ticker) { clearInterval(ticker); ticker = null; } }
 
-  E.startIntro = function () {
+  E.startIntro = function (skipGate) {
     if (NP.store.data.inprogress) {
       NP.modal("Exam in progress", "<p>You have an unfinished mock. Resume or discard it from the home screen first.</p>");
+      return;
+    }
+    // The mock is the finish line of the course. Gate it, but let a determined
+    // user through — some people want a cold diagnostic first.
+    if (!skipGate && NP.course && !NP.course.courseComplete()) {
+      const pct = NP.course.percentComplete();
+      NP.modal("The mock exam is the finish line",
+        `<p>The study course is <strong>${pct}% complete</strong>. It's built to take you from
+         first principles to exam-ready, and the mock is designed as the test you sit
+         <em>after</em> finishing it.</p>
+         <p>You can still take the mock now as a cold diagnostic — just expect a low score if
+         you haven't worked through the material yet.</p>`,
+        [
+          { label: "Go to the course", action: () => NP.show(NP.screens.course) },
+          { label: "Take the mock anyway", secondary: true, action: () => E.startIntro(true) }
+        ]);
       return;
     }
     NP.show(root => {
