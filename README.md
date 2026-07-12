@@ -2,8 +2,13 @@
 
 A free, fully offline simulator of the **CompTIA Network+ N10-009** exam: realistic
 question style and difficulty, performance-based questions with partial credit, and a
-Pearson VUE-style interface. No accounts, no tracking, no build step. Your data never
-leaves your browser.
+Pearson VUE-style interface. Anonymous by default — no account required, no build step.
+Used anonymously, your data never leaves your browser.
+
+Optionally, you can sign in with a username and a 6-digit PIN to sync your progress across
+devices (the Network+ and GRE apps share one account); when signed in, your progress is also
+stored on the sync server. At signup you're shown a recovery code **once** — it is the only
+way to reset a forgotten PIN (there is no email recovery), so save it somewhere safe.
 
 **Take it here:** open `index.html`, or use the hosted version on GitHub Pages.
 
