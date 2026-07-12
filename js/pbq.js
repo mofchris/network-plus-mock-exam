@@ -33,6 +33,12 @@
       it.kind === "fill" ? String(ans[i] || "").trim() !== "" : ans[i] != null);
   };
 
+  P.filledCount = function (q, ans) {
+    if (!Array.isArray(ans)) return 0;
+    return q.items.filter((it, i) =>
+      it.kind === "fill" ? String(ans[i] || "").trim() !== "" : ans[i] != null).length;
+  };
+
   P.gradeItem = function (it, val) {
     if (it.kind === "fill") {
       const got = String(val == null ? "" : val).trim().toLowerCase().replace(/\s+/g, " ");
@@ -67,11 +73,18 @@
 
     const wrap = el("div", { class: "pbq-items" });
     const graded = opts.review ? P.grade(q, getAns()) : null;
+    const foot = el("div", { class: "pbq-foot" });
+
+    const refreshFoot = () => {
+      const n = P.filledCount(q, getAns());
+      foot.textContent =
+        `${n} of ${q.items.length} fields complete` +
+        (n < q.items.length ? " — blank fields keep any partial credit you've earned." : ".");
+    };
 
     q.items.forEach((it, i) => {
       const row = el("div", { class: "pbq-item" });
-      const left = el("div", { html: it.label });
-      row.appendChild(left);
+      row.appendChild(el("div", { html: it.label }));
       const right = el("div");
 
       const current = () => {
@@ -83,36 +96,54 @@
         a = Array.isArray(a) ? a.slice() : P.blankAnswer(q);
         a[i] = v;
         setAns(a);
+        refreshFoot();
       };
 
       if (it.kind === "fill") {
-        const inp = el("input", { type: "text", value: current() == null ? "" : current(),
-          placeholder: it.placeholder || "", oninput: e => setItem(e.target.value) });
+        const inp = el("input", {
+          type: "text",
+          value: current() == null ? "" : current(),
+          placeholder: it.placeholder || "",
+          "aria-label": String(it.label).replace(/<[^>]+>/g, ""),
+          oninput: e => setItem(e.target.value)
+        });
         if (ro) inp.disabled = true;
         right.appendChild(inp);
       } else {
-        const sel = el("select", { onchange: e => setItem(e.target.value === "" ? null : parseInt(e.target.value, 10)) });
-        sel.appendChild(el("option", { value: "" }, ", choose, "));
+        const sel = el("select", {
+          "aria-label": String(it.label).replace(/<[^>]+>/g, ""),
+          onchange: e => setItem(e.target.value === "" ? null : parseInt(e.target.value, 10))
+        });
+        sel.appendChild(el("option", { value: "" }, "— choose —"));
         it.options.forEach((o, oi) => {
           const opt = el("option", { value: String(oi) }, o);
           if (current() === oi) opt.selected = true;
           sel.appendChild(opt);
         });
         if (ro) sel.disabled = true;
-        right.appendChild(sel);
+        const sw = el("div", { class: "selwrap" }, sel);
+        sw.appendChild(el("span", { class: "chev" }, NP.icon("chevD", 14)));
+        right.appendChild(sw);
       }
 
       if (opts.review) {
         const ok = graded.per[i];
         row.classList.add(ok ? "ok" : "bad");
-        const v = el("div", { class: "verdict " + (ok ? "ok" : "bad") },
-          ok ? "✔ Correct" : "✘ Correct answer: " + P.correctText(it));
+        const v = el("div", { class: "verdict " + (ok ? "ok" : "bad") });
+        v.appendChild(NP.icon(ok ? "check" : "x", 14, ok ? 3 : 2.6));
+        v.appendChild(document.createTextNode(
+          ok ? "Correct" : "Correct answer: " + P.correctText(it)));
         right.appendChild(v);
       }
+
       row.appendChild(right);
       wrap.appendChild(row);
     });
 
     container.appendChild(wrap);
+    if (!opts.review) {
+      refreshFoot();
+      container.appendChild(foot);
+    }
   };
 })();

@@ -49,6 +49,7 @@
       ? !!(p.modules[step.item.id] && p.modules[step.item.id].passed)
       : !!(p.checkpoints[step.item.id] && p.checkpoints[step.item.id].passed);
   }
+  C.isDone = isDone;
 
   // A step is unlocked when every earlier step is done.
   function unlockedIndex() {
@@ -56,6 +57,7 @@
     for (let i = 0; i < s.length; i++) if (!isDone(s[i])) return i;
     return s.length; // course complete
   }
+  C.unlockedIndex = unlockedIndex;
   C.courseComplete = () => unlockedIndex() >= steps().length;
 
   C.percentComplete = function () {
@@ -65,94 +67,119 @@
     return Math.round(100 * done / s.length);
   };
 
+  function stepIndexOf(id) {
+    return steps().findIndex(s => s.item.id === id);
+  }
+
   /* ---------- syllabus ---------- */
 
   NP.screens.course = function (root) {
     const el = NP.el;
-    const { bar, stage, inner } = NP.chrome("Study Course");
-    root.appendChild(bar); root.appendChild(stage);
+    const { head, stage, inner } = NP.chrome("Course");
+    root.appendChild(head); root.appendChild(stage);
 
     const pct = C.percentComplete();
     const s = steps();
     const uIdx = unlockedIndex();
+    const done = s.filter(isDone).length;
 
     inner.appendChild(el("h1", { class: "screen-title" }, "Network+ Study Course"));
     inner.appendChild(el("p", { class: "screen-sub" },
-      "From first principles to exam-ready. Read each module, pass its quiz (75% or better) to unlock the next, " +
-      "and clear the cumulative checkpoint at the end of every unit. Finish the course to unlock the full mock exam."));
+      "Read each module, pass its quiz at 75% to unlock the next, and clear the cumulative " +
+      "checkpoint at the end of every unit. Finish the course to unlock the full mock exam."));
 
-    /* progress bar */
-    const pcard = el("div", { class: "card" });
-    pcard.appendChild(el("h3", null, `Course progress: ${pct}%`));
-    const track = el("div", { class: "tbar-track", style: "height:22px" });
-    track.appendChild(el("div", { class: "tbar-fill", style: `width:${pct}%` }));
-    pcard.appendChild(track);
-    pcard.appendChild(el("p", { style: "margin:10px 0 0;font-size:14px;color:#5b6572" },
-      `${s.filter(isDone).length} of ${s.length} steps complete (${s.filter(x => x.kind === "module").length} modules + ${s.filter(x => x.kind === "checkpoint").length} checkpoints).`));
+    /* progress card */
+    const pc = el("div", { class: "progcard" });
+    pc.appendChild(el("div", { class: "top" },
+      el("span", { class: "lbl" }, "Course progress"),
+      el("span", { class: "num", html: `${done} / ${s.length} steps · <b>${pct}%</b>` })));
+    const track = el("div", { class: "track" });
+    track.appendChild(el("i", { style: `width:${pct}%` }));
+    pc.appendChild(track);
+    inner.appendChild(pc);
 
     if (C.courseComplete()) {
-      const row = el("div", { class: "btnrow" });
-      row.appendChild(el("button", { class: "bigbtn", onclick: () => NP.exam.startIntro() },
-        "🎓 Course complete: take the mock exam"));
-      pcard.appendChild(row);
-    } else {
-      const next = s[uIdx];
-      const row = el("div", { class: "btnrow" });
-      row.appendChild(el("button", { class: "bigbtn", onclick: () => open(next) },
-        (pct === 0 ? "Start the course" : "Continue") + ", " + next.item.title));
-      pcard.appendChild(row);
-      pcard.appendChild(el("p", { style: "margin:10px 0 0;font-size:13px;color:#5b6572" },
-        "The full mock exam unlocks when every module and checkpoint is passed."));
+      inner.appendChild(el("button", {
+        class: "btn good big wide", style: "margin-bottom:22px",
+        onclick: () => NP.exam.startIntro()
+      }, "Course complete, take the mock exam", NP.icon("arrow", 18)));
     }
-    inner.appendChild(pcard);
 
     /* units */
     let idx = 0;
-    (window.NETCOURSE.units || []).forEach(u => {
-      const card = el("div", { class: "card" });
-      card.appendChild(el("h3", null, u.title));
-      card.appendChild(el("p", { style: "color:#5b6572;margin-top:-4px" }, u.blurb));
+    (window.NETCOURSE.units || []).forEach((u, ui) => {
+      const group = el("div", { class: "unitgroup" });
+      const n = u.modules.length + (u.checkpoint ? 1 : 0);
+      const start = idx;
+      const unitDone = uIdx >= start + n;
+      const unitCur = !unitDone && uIdx >= start && uIdx < start + n;
+
+      const hd = el("div", { class: "unithead" });
+      hd.appendChild(unitDone
+        ? el("span", { class: "pill good" }, `UNIT ${ui + 1}`, NP.icon("check", 12, 3.4))
+        : unitCur
+          ? el("span", { class: "pill accent" }, `UNIT ${ui + 1} · IN PROGRESS`)
+          : el("span", { class: "pill" }, `UNIT ${ui + 1}`, NP.icon("lock", 12)));
+      hd.appendChild(el("span", { class: "nm" }, u.title));
+      group.appendChild(hd);
+      if (u.blurb) group.appendChild(el("p", { class: "unitblurb" }, u.blurb));
 
       const list = el("div", { class: "mod-list" });
       const addRow = (step, i) => {
-        const done = isDone(step);
+        const isCp = step.kind === "checkpoint";
+        const d = isDone(step);
         const locked = i > uIdx;
         const isNext = i === uIdx;
         const p = prog();
-        const rec = step.kind === "module" ? p.modules[step.item.id] : p.checkpoints[step.item.id];
+        const rec = isCp ? p.checkpoints[step.item.id] : p.modules[step.item.id];
+
         const row = el("button", {
-          class: "mod-row" + (done ? " done" : "") + (locked ? " locked" : "") + (isNext ? " next" : ""),
+          class: "mod-row" + (d ? " done" : "") + (locked ? " locked" : "") +
+                 (isNext ? " next" : "") + (isCp ? " cp" : ""),
+          disabled: locked ? "disabled" : null,
           onclick: () => { if (!locked) open(step); }
         });
-        row.appendChild(el("span", { class: "mod-ic" }, done ? "✓" : locked ? "🔒" : step.kind === "checkpoint" ? "🏁" : "▶"));
-        const mid = el("span", { class: "mod-mid" });
-        mid.appendChild(el("span", { class: "mod-title" },
-          (step.kind === "checkpoint" ? "Checkpoint: " : "") + step.item.title));
+
+        row.appendChild(el("span", { class: "mod-ic" },
+          d ? NP.icon("check", 14, 3.2)
+            : locked ? NP.icon("lock", 13)
+            : isCp ? NP.icon("flag", 13)
+            : NP.icon("play", 12)));
+
         const meta = [];
-        if (step.kind === "module") {
+        if (isCp) { meta.push("cumulative"); meta.push(step.item.n + " questions"); }
+        else {
           meta.push(step.item.level);
-          meta.push(step.item.minutes + " min read");
+          meta.push(step.item.minutes + " min");
           meta.push(step.item.quiz.length + "-question quiz");
-        } else {
-          meta.push("cumulative");
-          meta.push(step.item.n + " questions");
         }
         if (rec && rec.best != null) meta.push("best " + rec.best + "%");
-        mid.appendChild(el("span", { class: "mod-meta" }, meta.join(" · ")));
-        row.appendChild(mid);
-        row.appendChild(el("span", { class: "mod-st" },
-          done ? "Passed" : locked ? "Locked" : isNext ? "Start" : ""));
+        else if (locked) meta.push("locked");
+
+        row.appendChild(el("span", { class: "mod-mid" },
+          el("span", { class: "mod-title" }, (isCp ? "Checkpoint: " : "") + step.item.title),
+          el("span", { class: "mod-meta" }, meta.join(" · "))));
+
+        const st = el("span", { class: "mod-st" });
+        if (d) st.appendChild(document.createTextNode("PASSED"));
+        else if (locked) st.appendChild(document.createTextNode("LOCKED"));
+        else if (isNext) {
+          st.appendChild(document.createTextNode(rec && rec.best != null ? "RESUME" : "START"));
+          st.appendChild(NP.icon("chevR", 15, 2.4));
+        }
+        row.appendChild(st);
         list.appendChild(row);
       };
 
       u.modules.forEach(m => addRow({ kind: "module", unit: u, item: m }, idx++));
       if (u.checkpoint) addRow({ kind: "checkpoint", unit: u, item: u.checkpoint }, idx++);
-      card.appendChild(list);
-      inner.appendChild(card);
+      group.appendChild(list);
+      inner.appendChild(group);
     });
 
     inner.appendChild(el("p", { class: "footnote" },
-      "Passing mark is 75%. You can retake any quiz as many times as you like: your best score is kept, and completed modules stay open for review."));
+      "Passing mark is 75%. You can retake any quiz as many times as you like: your best score " +
+      "is kept, and completed modules stay open for review."));
   };
 
   function open(step) {
@@ -165,13 +192,33 @@
   function readModule(m) {
     NP.show(root => {
       const el = NP.el;
-      const { bar, stage, inner } = NP.chrome("Module");
-      root.appendChild(bar); root.appendChild(stage);
+      const all = steps();
+      const i = stepIndexOf(m.id);
+      const unit = i >= 0 ? all[i].unit : null;
+      const mods = all.filter(s => s.kind === "module");
+      const modNo = mods.findIndex(s => s.item.id === m.id) + 1;
 
-      inner.appendChild(el("div", { style: "margin-bottom:8px" },
-        el("span", { class: "pill" }, m.level),
+      root.appendChild(NP.crumb(
+        [["Course", () => NP.show(NP.screens.course)], unit ? unit.title : "Unit", m.title],
+        modNo ? `module ${modNo} of ${mods.length}` : null));
+
+      const hair = NP.hairline(0);
+      root.appendChild(hair);
+      const fill = hair.firstChild;
+
+      const { stage, inner } = NP.stage("reader");
+      root.appendChild(stage);
+
+      // Reading progress tracks how far through the lesson you've scrolled.
+      stage.addEventListener("scroll", () => {
+        const max = stage.scrollHeight - stage.clientHeight;
+        fill.style.width = (max > 0 ? Math.min(100, 100 * stage.scrollTop / max) : 100) + "%";
+      });
+
+      inner.appendChild(el("div", { class: "pillrow" },
+        el("span", { class: "pill accent" }, m.level),
         el("span", { class: "pill" }, m.minutes + " min read")));
-      inner.appendChild(el("h1", { class: "screen-title" }, m.title));
+      inner.appendChild(el("h1", { class: "lesson-h1" }, m.title));
 
       const body = el("div", { class: "lesson" });
       body.innerHTML = m.content;
@@ -180,11 +227,20 @@
       prog().read[m.id] = true;
       NP.store.save();
 
-      const row = el("div", { class: "btnrow" });
-      row.appendChild(el("button", { class: "bigbtn", onclick: () => runQuiz(m, m.quiz, false) },
-        `Take the module quiz (${m.quiz.length} questions)`));
-      row.appendChild(el("button", { class: "bigbtn secondary", onclick: () => NP.show(NP.screens.course) }, "Back to syllabus"));
-      inner.appendChild(row);
+      // Previous is only offered when the earlier step is a module you've unlocked.
+      const prevStep = i > 0 ? all[i - 1] : null;
+      const canPrev = !!(prevStep && prevStep.kind === "module");
+      const foot = el("div", { class: "lessonfoot" });
+      const prevBtn = el("button", {
+        class: "btn secondary",
+        disabled: canPrev ? null : "disabled",
+        onclick: () => { if (canPrev) readModule(prevStep.item); }
+      }, NP.icon("chevL", 16), "Previous");
+      foot.appendChild(prevBtn);
+      foot.appendChild(el("button", {
+        class: "btn grow", onclick: () => runQuiz(m, m.quiz, false)
+      }, `Take the module quiz (${m.quiz.length} questions)`, NP.icon("arrow", 17)));
+      inner.appendChild(foot);
     });
   }
 
@@ -204,35 +260,55 @@
     let i = 0, submitted = false;
 
     NP.show(root => {
-      const { bar, stage, inner } = NP.chrome(isCheckpoint ? "Checkpoint" : "Module quiz");
-      root.appendChild(bar); root.appendChild(stage);
+      const label = (isCheckpoint ? "Checkpoint" : "Quiz") + " · " + owner.title;
+      const crumb = NP.crumb([["Course", () => NP.show(NP.screens.course)], label], "");
+      const counter = crumb.querySelector(".right");
+      root.appendChild(crumb);
+
+      const hair = NP.hairline(0);
+      root.appendChild(hair);
+      const fill = hair.firstChild;
+
+      const { stage, inner } = NP.stage();
+      root.appendChild(stage);
       paint();
 
       function paint() {
         inner.innerHTML = "";
         if (submitted) { results(); return; }
+
         const q = qs[i];
-        inner.appendChild(el("div", { style: "margin-bottom:8px" },
-          el("span", { class: "pill" }, (isCheckpoint ? "Checkpoint: " : "Quiz: ") + owner.title),
-          el("span", { class: "pill" }, `Question ${i + 1} of ${qs.length}`)));
+        counter.textContent = `Question ${i + 1} of ${qs.length}`;
+        fill.style.width = (100 * (i + 1) / qs.length) + "%";
 
-        const multi = Array.isArray(q.answer);
-        if (multi) inner.appendChild(el("p", { class: "pbq-note" }, `Select ${q.answer.length} answers.`));
+        NP.renderMC(inner, { text: q.text, choices: q.choices, answer: q.answer },
+          () => answers[i], v => { answers[i] = v; }, {});
 
-        const fake = { text: q.text, choices: q.choices, answer: q.answer };
-        NP.renderMC(inner, fake, () => answers[i], v => { answers[i] = v; }, {});
+        const row = el("div", { class: "btnrow", style: "justify-content:space-between" });
+        const left = el("div", { style: "display:flex;gap:12px" });
+        if (i > 0) left.appendChild(el("button", {
+          class: "btn secondary", onclick: () => { i--; paint(); }
+        }, NP.icon("chevL", 16), "Back"));
+        left.appendChild(el("button", {
+          class: "btn secondary", onclick: () => NP.show(NP.screens.course)
+        }, "Exit"));
+        row.appendChild(left);
 
-        const row = el("div", { class: "btnrow" });
-        if (i > 0) row.appendChild(el("button", { class: "bigbtn secondary", onclick: () => { i--; paint(); } }, "◀ Back"));
-        row.appendChild(el("button", { class: "bigbtn", onclick: () => {
-          if (answers[i] == null || (Array.isArray(q.answer) && (!Array.isArray(answers[i]) || answers[i].length !== q.answer.length))) {
-            NP.modal("Answer required", "<p>Choose your answer" + (Array.isArray(q.answer) ? "s" : "") + " before continuing.</p>");
-            return;
+        row.appendChild(el("button", {
+          class: "btn", onclick: () => {
+            const need = Array.isArray(q.answer);
+            const a = answers[i];
+            if (a == null || (need && (!Array.isArray(a) || a.length !== q.answer.length))) {
+              NP.modal("Answer required",
+                "<p>Choose your answer" + (need ? "s" : "") + " before continuing.</p>",
+                [{ label: "OK" }], { intent: "info" });
+              return;
+            }
+            if (i < qs.length - 1) { i++; paint(); }
+            else { submitted = true; paint(); }
           }
-          if (i < qs.length - 1) { i++; paint(); }
-          else { submitted = true; paint(); }
-        } }, i < qs.length - 1 ? "Next ▶" : "Submit quiz"));
-        row.appendChild(el("button", { class: "bigbtn secondary", onclick: () => NP.show(NP.screens.course) }, "Exit"));
+        }, i < qs.length - 1 ? "Next" : "Submit quiz",
+           i < qs.length - 1 ? NP.icon("chevR", 16) : null));
         inner.appendChild(row);
         stage.scrollTop = 0;
       }
@@ -250,25 +326,34 @@
         bucket[owner.id] = rec;
         NP.store.save();
 
-        inner.appendChild(el("h1", { class: "screen-title" },
-          (isCheckpoint ? "Checkpoint result: " : "Quiz result, ") + owner.title));
-        const banner = el("div", { class: "passbanner " + (passed ? "pass" : "fail") },
+        counter.textContent = "Result";
+        fill.style.width = "100%";
+
+        inner.appendChild(el("h1", { class: "screen-title", style: "margin-bottom:16px" },
+          (isCheckpoint ? "Checkpoint result: " : "Quiz result: ") + owner.title));
+
+        const banner = el("div", { class: "banner sm " + (passed ? "pass" : "fail") });
+        banner.appendChild(el("div", { class: "left" },
+          el("span", { class: "tile" }, NP.icon(passed ? "check" : "x", 26, 2.6)),
           el("div", null,
-            el("div", { class: "big" }, passed ? "PASSED" : "NOT YET"),
-            el("div", { class: "sub" }, passed
-              ? (isCheckpoint ? "Unit cleared. The next unit is unlocked." : "Module complete. The next step is unlocked.")
-              : `You need ${PASS}% to pass. Review the explanations below and retake it: there's no limit.`)),
-          el("div", { style: "text-align:right" },
-            el("div", { class: "big" }, pct + "%"),
-            el("div", { class: "sub" }, `${correct} of ${qs.length} correct`)));
+            el("div", { class: "word" }, passed ? "Passed" : "Not yet"),
+            el("div", { class: "ctx" }, passed
+              ? (isCheckpoint ? "Unit cleared. The next unit is unlocked."
+                              : "Module complete, the next step is unlocked.")
+              : `You need ${PASS}% to pass. Review the explanations below and retake it, there's no limit.`))));
+        banner.appendChild(el("div", { class: "right" },
+          el("div", { class: "score" }, pct + "%"),
+          el("div", { class: "scale" }, `${correct} of ${qs.length} correct`)));
         inner.appendChild(banner);
 
         qs.forEach((q, j) => {
           const ok = NP.gradeMC(q, answers[j]);
-          const box = el("div", { class: "rev-item" });
+          const box = el("div", { class: "rev-item", style: "margin-top:16px" });
+          const vd = el("span", { class: "vd " + (ok ? "ok" : "no") });
+          vd.appendChild(NP.icon(ok ? "check" : "x", 14, ok ? 3 : 2.6));
+          vd.appendChild(document.createTextNode(ok ? "Correct" : "Incorrect"));
           box.appendChild(el("div", { class: "rhead" },
-            el("strong", null, `Question ${j + 1}`),
-            el("span", { class: ok ? "ok" : "no" }, ok ? "✔ Correct" : "✘ Incorrect")));
+            el("span", { class: "qn" }, `Question ${j + 1}`), vd));
           NP.renderMC(box, q, () => answers[j], () => {}, { review: true });
           const ex = el("div", { class: "expl" });
           ex.innerHTML = "<strong>Explanation.</strong> " + q.expl;
@@ -278,17 +363,25 @@
 
         const row = el("div", { class: "btnrow" });
         if (passed) {
-          row.appendChild(el("button", { class: "bigbtn", onclick: () => NP.show(NP.screens.course) }, "Continue the course"));
+          row.appendChild(el("button", {
+            class: "btn", style: "flex:1", onclick: () => NP.show(NP.screens.course)
+          }, "Continue the course", NP.icon("arrow", 17)));
         } else {
-          row.appendChild(el("button", { class: "bigbtn", onclick: () => {
-            answers.fill(null); i = 0; submitted = false;
-            if (isCheckpoint) { qs.length = 0; buildCheckpoint(owner).forEach(q => qs.push(q)); }
-            paint();
-          } }, "Retake"));
+          row.appendChild(el("button", {
+            class: "btn", onclick: () => {
+              answers.fill(null); i = 0; submitted = false;
+              if (isCheckpoint) { qs.length = 0; buildCheckpoint(owner).forEach(q => qs.push(q)); }
+              paint();
+            }
+          }, "Retake"));
           if (!isCheckpoint) {
-            row.appendChild(el("button", { class: "bigbtn secondary", onclick: () => readModule(owner) }, "Re-read the module"));
+            row.appendChild(el("button", {
+              class: "btn secondary", onclick: () => readModule(owner)
+            }, "Re-read the module"));
           }
-          row.appendChild(el("button", { class: "bigbtn secondary", onclick: () => NP.show(NP.screens.course) }, "Back to syllabus"));
+          row.appendChild(el("button", {
+            class: "btn secondary", onclick: () => NP.show(NP.screens.course)
+          }, "Back to syllabus"));
         }
         inner.appendChild(row);
         stage.scrollTop = 0;

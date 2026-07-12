@@ -1,5 +1,5 @@
-/* Network+ Exam Simulator - shell, router, storage. Loads LAST; other modules
-   must guard shared sub-objects (NP.screens etc.) at load time. */
+/* Network+ Exam Simulator - shell, router, storage, icons, chrome. Loads LAST;
+   other modules must guard shared sub-objects (NP.screens etc.) at load time. */
 (function () {
   "use strict";
   const NP = window.NP = window.NP || {};
@@ -35,7 +35,9 @@
       if (k === "class") n.className = attrs[k];
       else if (k === "html") n.innerHTML = attrs[k];
       else if (k.startsWith("on")) n.addEventListener(k.slice(2), attrs[k]);
-      else n.setAttribute(k, attrs[k]);
+      // null/undefined means "omit". Passing them through would set boolean
+      // attributes like disabled to the string "null", which still disables.
+      else if (attrs[k] != null) n.setAttribute(k, attrs[k]);
     }
     for (const kid of kids) {
       if (kid == null) continue;
@@ -47,22 +49,115 @@
   NP.esc = s => String(s).replace(/[&<>"']/g, c =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-  NP.modal = function (title, bodyHTML, buttons) {
-    const veil = NP.el("div", { class: "modal-veil" });
-    const box = NP.el("div", { class: "modal" });
-    box.appendChild(NP.el("h3", { html: title }));
-    box.appendChild(NP.el("div", { html: bodyHTML }));
-    const row = NP.el("div", { class: "btnrow" });
+  /* ---------------- icon system (replaces all emoji) ---------------- */
+
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const ICONS = {
+    check:    { d: "M5 12l4 4 10-11", w: 2.6 },
+    x:        { d: "M6 6l12 12M18 6L6 18", w: 2.6 },
+    lock:     { d: "M8 10.5V8a4 4 0 0 1 8 0v2.5", rect: [5, 10.5, 14, 9.5, 2] },
+    flag:     { d: "M5 21V4h11l-2 4 2 4H5" },
+    clock:    { d: "M12 7v5l3 2", circle: [12, 12, 9] },
+    partial:  { d: "M12 12V7M12 12l4 2", circle: [12, 12, 9], w: 2.4 },
+    play:     { d: "M8 5v14l11-7z", fill: true },
+    arrow:    { d: "M4 12h14M12 6l6 6-6 6", w: 2.2 },
+    chevR:    { d: "M9 6l6 6-6 6", w: 2.2 },
+    chevL:    { d: "M15 6l-6 6 6 6", w: 2.2 },
+    chevD:    { d: "M6 9l6 6 6-6", w: 2.2 },
+    target:   { d: "", circle2: [[12, 12, 8], [12, 12, 3]] },
+    chart:    { d: "M5 20V10M12 20V4M19 20v-7" },
+    book:     { d: "M4 5v14M8 5h12v14H8M8 9h12M8 13h12" },
+    quiz:     { d: "M9 11l3 3 8-8M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9" },
+    alert:    { d: "M12 3l9 16H3zM12 9v4M12 17h.01" },
+    tutor:    { d: "M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z" },
+    logo:     { d: "M6 8.4v3.2a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8.4M12 13.6v2",
+                circle3: [[6, 6, 2.4], [18, 6, 2.4], [12, 18, 2.4]] }
+  };
+
+  NP.icon = function (name, size, strokeWidth) {
+    const spec = ICONS[name] || ICONS.check;
+    const s = size || 16;
+    const svg = document.createElementNS(SVGNS, "svg");
+    svg.setAttribute("class", "icon");
+    svg.setAttribute("width", s);
+    svg.setAttribute("height", s);
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("fill", spec.fill ? "currentColor" : "none");
+    svg.setAttribute("stroke", spec.fill ? "none" : "currentColor");
+    svg.setAttribute("stroke-width", strokeWidth || spec.w || 2);
+    svg.setAttribute("stroke-linecap", "round");
+    svg.setAttribute("stroke-linejoin", "round");
+    svg.setAttribute("aria-hidden", "true");
+
+    const add = (tag, at) => {
+      const n = document.createElementNS(SVGNS, tag);
+      for (const k in at) n.setAttribute(k, at[k]);
+      svg.appendChild(n);
+    };
+    if (spec.rect) add("rect", { x: spec.rect[0], y: spec.rect[1], width: spec.rect[2], height: spec.rect[3], rx: spec.rect[4] });
+    if (spec.circle) add("circle", { cx: spec.circle[0], cy: spec.circle[1], r: spec.circle[2] });
+    (spec.circle2 || spec.circle3 || []).forEach(c => add("circle", { cx: c[0], cy: c[1], r: c[2] }));
+    if (spec.d) add("path", { d: spec.d });
+    return svg;
+  };
+
+  /* ---------------- modal (focus trap, Escape, focus return) ---------------- */
+
+  NP.modal = function (title, bodyHTML, buttons, opts) {
+    opts = opts || {};
+    const el = NP.el;
+    const opener = document.activeElement;
+
+    const veil = el("div", { class: "modal-veil" });
+    const box = el("div", {
+      class: "modal", role: "dialog", "aria-modal": "true", "aria-label": title
+    });
+
+    const intent = opts.intent || (opts.danger ? "danger" : null);
+    if (intent) {
+      const ic = intent === "danger" ? "alert" : intent === "warning" ? "clock" : "book";
+      box.appendChild(el("div", { class: "tile " + intent }, NP.icon(ic, 24)));
+    }
+    box.appendChild(el("h3", { html: title }));
+    box.appendChild(el("div", { class: "mbody", html: bodyHTML || "" }));
+
+    const close = () => {
+      document.removeEventListener("keydown", onKey, true);
+      if (veil.parentNode) document.body.removeChild(veil);
+      if (opener && opener.focus) opener.focus();
+    };
+
+    const row = el("div", { class: "btnrow" });
     (buttons || [{ label: "OK" }]).forEach(b => {
-      row.appendChild(NP.el("button", {
-        class: "bigbtn" + (b.secondary ? " secondary" : ""),
-        onclick: () => { document.body.removeChild(veil); if (b.action) b.action(); }
+      const cls = b.secondary ? "btn secondary" : b.danger ? "btn danger" : "btn";
+      row.appendChild(el("button", {
+        class: cls,
+        onclick: () => { close(); if (b.action) b.action(); }
       }, b.label));
     });
     box.appendChild(row);
     veil.appendChild(box);
     document.body.appendChild(veil);
+
+    const focusable = () => box.querySelectorAll("button, [href], input, select, textarea");
+
+    function onKey(e) {
+      if (e.key === "Escape") { e.preventDefault(); close(); return; }
+      if (e.key !== "Tab") return;
+      const f = focusable();
+      if (!f.length) return;
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+    document.addEventListener("keydown", onKey, true);
+
+    const f = focusable();
+    if (f.length) f[0].focus();
+    return { close };
   };
+
+  /* ---------------- utils ---------------- */
 
   NP.shuffle = function (arr) {
     const a = arr.slice();
@@ -88,8 +183,6 @@
     5: "5.0 Network Troubleshooting"
   };
 
-  /* ---------------- question index ---------------- */
-
   NP.buildIndex = function () {
     const B = window.NETBANK;
     const ix = {};
@@ -98,219 +191,621 @@
     NP.byId = ix;
   };
 
-  /* ---------------- router / chrome ---------------- */
+  /* ---------------- router ---------------- */
 
   const app = document.getElementById("app");
+
   NP.show = function (fn) {
     app.innerHTML = "";
     fn(app);
     window.scrollTo(0, 0);
+    // Move focus to the new screen's heading so keyboard/SR users land in the right place.
+    const h = app.querySelector(".screen-title, .lesson-h1");
+    if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
   };
 
-  NP.chrome = function (sub) {
-    const bar = NP.el("div", { class: "topbar" },
-      NP.el("div", { class: "brand" }, "CompTIA Network+ (N10-009), Exam Simulator",
-        NP.el("small", null, sub || "Practice simulator, not affiliated with CompTIA")),
-      NP.el("div", { class: "meta" },
-        NP.el("button", { class: "tbtn", onclick: () => NP.show(NP.screens.home) }, "Home")));
-    const stage = NP.el("div", { class: "stage" });
-    const inner = NP.el("div", { class: "stage-inner" });
+  /* ---------------- chrome builders ---------------- */
+
+  const NAV = [
+    ["Dashboard", () => NP.show(NP.screens.home)],
+    ["Course", () => NP.show(NP.screens.course)],
+    ["Tutor", () => NP.show(NP.screens.tutor)],
+    ["Reference", () => NP.show(NP.screens.sheets)],
+    ["History", () => NP.show(NP.screens.history)]
+  ];
+
+  /* Study header with product identity + nav. `active` is the nav label to mark. */
+  NP.chrome = function (active) {
+    const el = NP.el;
+    const head = el("div", { class: "tophead" },
+      el("div", { class: "brandwrap" },
+        el("span", { class: "logo" }, NP.icon("logo", 20)),
+        el("div", { class: "names" },
+          el("div", { class: "pname" }, "Network+ Simulator"),
+          el("div", { class: "psub" }, "N10-009 · independent study tool"))),
+      el("nav", { class: "topnav", "aria-label": "Main" },
+        ...NAV.map(([label, go]) => el("button", {
+          class: active === label ? "on" : "",
+          "aria-current": active === label ? "page" : null,
+          onclick: go
+        }, label))));
+
+    const stage = el("div", { class: "stage" });
+    const inner = el("div", { class: "stage-inner screen-in" });
     stage.appendChild(inner);
-    return { bar, stage, inner };
+    return { head, bar: head, stage, inner };
+  };
+
+  /* Breadcrumb bar for inner study screens: NP.crumb([["Course", fn], "Unit 1"], "right text") */
+  NP.crumb = function (parts, right) {
+    const el = NP.el;
+    const bar = el("div", { class: "crumb" });
+    parts.forEach((p, i) => {
+      if (i) bar.appendChild(el("span", { class: "sep" }, "/"));
+      if (Array.isArray(p)) {
+        bar.appendChild(el("button", { onclick: p[1] }, NP.icon("chevL", 16), p[0]));
+      } else {
+        bar.appendChild(el("span", { class: "cur" }, p));
+      }
+    });
+    // Always present so callers can fill it in later (quiz counters do this).
+    bar.appendChild(el("span", { class: "right" }, right || ""));
+    return bar;
+  };
+
+  /* 3px progress hairline. Returns the element; set width via .style on the child. */
+  NP.hairline = function (pct) {
+    const bar = NP.el("div", { class: "hairline" });
+    bar.appendChild(NP.el("i", { style: `width:${Math.max(0, Math.min(100, pct))}%` }));
+    return bar;
+  };
+
+  /* Stage + inner for screens that build their own header. */
+  NP.stage = function (wide) {
+    const stage = NP.el("div", { class: "stage" });
+    const inner = NP.el("div", { class: "stage-inner screen-in" + (wide ? " " + wide : "") });
+    stage.appendChild(inner);
+    return { stage, inner };
   };
 
   /* ---------------- screens ---------------- */
 
   NP.screens = NP.screens || {};
 
+  const DISCLAIMER =
+    "CompTIA® and Network+® are registered trademarks of CompTIA, Inc. This simulator is an " +
+    "independent study tool, not affiliated with or endorsed by CompTIA. Scores are estimates.";
+
+  /* ============ dashboard ============ */
+
   NP.screens.home = function (root) {
-    const { bar, stage, inner } = NP.chrome();
-    root.appendChild(bar); root.appendChild(stage);
+    const el = NP.el;
+    const { head, stage, inner } = NP.chrome("Dashboard");
+    inner.classList.add("wide");
+    root.appendChild(head); root.appendChild(stage);
 
-    inner.appendChild(NP.el("h1", { class: "screen-title" }, "CompTIA Network+ N10-009, Exam Simulator"));
-    inner.appendChild(NP.el("p", { class: "screen-sub" },
-      "Full 75-question timed mocks with performance-based questions, Pearson-style interface, and 100–900 scoring: plus a tutor mode to learn before you test. Runs entirely in your browser."));
-
+    const C = NP.course;
+    const steps = C ? C.steps() : [];
+    const uIdx = C ? C.unlockedIndex() : 0;
+    const pct = C ? C.percentComplete() : 0;
+    const complete = C ? C.courseComplete() : false;
     const ip = Store.data.inprogress;
-    if (ip) {
-      const card = NP.el("div", { class: "card" });
-      card.appendChild(NP.el("h3", null, "Exam in progress"));
-      card.appendChild(NP.el("p", null,
-        `Unfinished mock from ${new Date(ip.startedAt).toLocaleString()}: ` +
-        `${NP.fmtTime(ip.remaining)} remaining. The clock only runs while the exam is open.`));
-      const row = NP.el("div", { class: "btnrow" });
-      row.appendChild(NP.el("button", { class: "bigbtn", onclick: () => NP.exam.resume() }, "Resume exam"));
-      row.appendChild(NP.el("button", {
-        class: "bigbtn secondary", onclick: () => {
-          NP.modal("Discard exam?", "<p>The in-progress attempt will be deleted and not scored.</p>", [
-            { label: "Discard", action: () => { Store.data.inprogress = null; Store.save(); NP.show(NP.screens.home); } },
-            { label: "Keep it", secondary: true }
-          ]);
-        }
-      }, "Discard"));
-      card.appendChild(row);
-      inner.appendChild(card);
-    }
 
-    const grid = NP.el("div", { class: "home-grid" });
-    const tile = (em, h, p, fn) => grid.appendChild(NP.el("button", { class: "home-tile", onclick: fn },
-      NP.el("div", { class: "em" }, em), NP.el("h3", null, h), NP.el("p", null, p)));
+    inner.appendChild(el("h1", { class: "screen-title" }, "Dashboard"));
+    inner.appendChild(el("p", { class: "screen-sub" },
+      "Everything runs in your browser. Nothing is uploaded."));
 
-    const cpct = NP.course ? NP.course.percentComplete() : 0;
-    const cdone = NP.course ? NP.course.courseComplete() : false;
-    tile("📘", "Study Course" + (cpct > 0 ? `: ${cpct}% complete` : ""),
-      cdone
-        ? "Course complete. Every module and checkpoint passed. You're ready for the mock exam."
-        : "20 modules from first principles to exam-ready, each with a quiz you must pass to continue, plus a cumulative checkpoint at the end of every unit.",
-      () => NP.show(NP.screens.course));
-
-    tile(cdone ? "🖥️" : "🔒", "Take a Full Mock Exam",
-      cdone
-        ? "Course complete: you've earned it. 75 questions, 90 minutes, PBQs first, domain-weighted like the real N10-009, with the 720 passing line."
-        : `Unlocks when the study course is complete (${cpct}% done). 75 questions, 90 minutes, PBQs first, scored against the 720 passing line.`,
-      () => NP.exam.startIntro());
-    tile("🎓", "Tutor Mode",
-      "Untimed practice by domain, difficulty, and type with instant feedback and full explanations, including PBQs.",
-      () => NP.show(NP.screens.tutor));
-    tile("📚", "Study Sheets",
-      "The three things every candidate drills: common ports & protocols, the OSI model, and the CompTIA troubleshooting methodology.",
-      () => NP.show(NP.screens.sheets));
-    tile("📈", "Score History",
-      "Past attempts with scaled scores, pass/fail, domain breakdowns, and full question review.",
-      () => NP.show(NP.screens.history));
-    tile("❌", "Missed Questions Deck",
-      "Everything you've gotten wrong, collected for re-drilling until it sticks.",
-      () => NP.show(NP.screens.missed));
-    inner.appendChild(grid);
-
-    const B = window.NETBANK;
-    const pbqItems = (B.pbqs || []).reduce((s, p) => s + p.items.length, 0);
-    inner.appendChild(NP.el("p", { class: "footnote" },
-      `Question bank: ${(B.mc || []).length} multiple-choice · ${(B.pbqs || []).length} PBQs (${pbqItems} scored items). ` +
-      "Exams assemble randomly with domain weighting and repeat-avoidance. " +
-      "CompTIA® and Network+® are registered trademarks of CompTIA, Inc. This simulator is an independent study tool, not affiliated with or endorsed by CompTIA. Scores are estimates."));
-  };
-
-  NP.screens.history = function (root) {
-    const { bar, stage, inner } = NP.chrome("Score History");
-    root.appendChild(bar); root.appendChild(stage);
-    inner.appendChild(NP.el("h1", { class: "screen-title" }, "Score History"));
-    const at = Store.data.attempts;
-    if (!at.length) {
-      inner.appendChild(NP.el("p", { class: "screen-sub" }, "No completed mocks yet."));
+    // First use: nothing started, no exam in progress.
+    if (!ip && pct === 0 && !Store.data.attempts.length) {
+      inner.appendChild(firstUse());
+      inner.appendChild(el("p", { class: "footnote" }, DISCLAIMER));
       return;
     }
+
+    const dash = el("div", { class: "dash" });
+    const main = el("div", { class: "dash-main" });
+    const rail = el("div", { class: "dash-rail" });
+
+    if (ip) main.appendChild(examPaused(ip));
+    else if (complete) main.appendChild(courseDone());
+    else main.appendChild(heroContinue(steps, uIdx));
+
+    main.appendChild(readiness(steps, uIdx, pct, complete));
+    const chart = quizChart(steps);
+    if (chart) main.appendChild(chart);
+
+    rail.appendChild(struggling());
+    rail.appendChild(courseMap(steps, uIdx));
+    rail.appendChild(quickTools());
+
+    dash.appendChild(main); dash.appendChild(rail);
+    inner.appendChild(dash);
+    inner.appendChild(el("p", { class: "footnote" }, bankLine() + " " + DISCLAIMER));
+
+    /* ---- pieces ---- */
+
+    function bankLine() {
+      const B = window.NETBANK;
+      const items = (B.pbqs || []).reduce((s, p) => s + p.items.length, 0);
+      return `Question bank: ${(B.mc || []).length} multiple-choice · ${(B.pbqs || []).length} PBQs ` +
+        `(${items} scored items). Exams assemble randomly with domain weighting and repeat-avoidance.`;
+    }
+
+    function firstUse() {
+      const B = window.NETBANK;
+      const card = el("div", { class: "card", style: "max-width:620px" });
+      card.appendChild(el("div", { class: "eyebrow" }, "Welcome"));
+      card.appendChild(el("h2", { style: "font-size:24px;margin:8px 0;letter-spacing:-.01em" },
+        "Start with the course."));
+      card.appendChild(el("p", { style: "color:var(--muted);margin:0 0 22px" },
+        `${steps.filter(s => s.kind === "module").length} modules take you from first principles to ` +
+        "exam-ready. Pass each module quiz at 75% to unlock the next; finish the course to unlock the " +
+        "full timed mock."));
+      const first = steps[0];
+      card.appendChild(el("button", {
+        class: "btn big wide",
+        onclick: () => NP.show(NP.screens.course)
+      }, first ? "Begin " + first.unit.title : "Begin the course", NP.icon("arrow", 18)));
+
+      const stats = el("div", { class: "statgrid" });
+      const stat = (v, l) => stats.appendChild(el("div", { class: "stat" },
+        el("div", { class: "v" }, v), el("div", { class: "l" }, l)));
+      stat(String((B.mc || []).length), "questions");
+      stat(String((B.pbqs || []).length), "PBQ scenarios");
+      stat("720", "to pass");
+      card.appendChild(stats);
+      return card;
+    }
+
+    function heroContinue(steps, uIdx) {
+      const next = steps[uIdx];
+      const hero = el("div", { class: "hero" });
+      const box = el("div", { class: "inner" });
+      box.appendChild(el("div", { class: "eyebrow" }, "Pick up where you left off"));
+
+      const modules = steps.filter(s => s.kind === "module");
+      const modNo = next && next.kind === "module" ? modules.indexOf(next) + 1 : 0;
+      const meta = el("div", { class: "meta" });
+      if (next.kind === "module") {
+        meta.appendChild(el("span", null, NP.icon("clock", 15), next.item.minutes + " min read"));
+        meta.appendChild(el("span", null, NP.icon("quiz", 15),
+          `${next.item.quiz.length}-question quiz · 75% to pass`));
+      } else {
+        meta.appendChild(el("span", null, NP.icon("flag", 15), "cumulative checkpoint"));
+        meta.appendChild(el("span", null, NP.icon("quiz", 15),
+          `${next.item.n} questions · 75% to pass`));
+      }
+
+      const left = el("div", { style: "min-width:0" },
+        el("div", { class: "unit" },
+          next.unit.title + (modNo ? ` · Module ${modNo} of ${modules.length}` : "")),
+        el("h2", null, (next.kind === "checkpoint" ? "Checkpoint: " : "") + next.item.title),
+        meta);
+
+      box.appendChild(el("div", { class: "split" }, left,
+        el("button", {
+          class: "btn white",
+          onclick: () => NP.show(NP.screens.course)
+        }, next.kind === "checkpoint" ? "Take the checkpoint" : "Continue module", NP.icon("arrow", 18))));
+      hero.appendChild(box);
+      return hero;
+    }
+
+    function examPaused(ip) {
+      const done = ip.answers ? ip.answers.filter(a => a != null).length : 0;
+      const total = ip.items ? ip.items.length : 0;
+      const p = el("div", { class: "panel amber" });
+      p.appendChild(el("div", { class: "flag" }, NP.icon("clock", 16), "Exam paused"));
+      p.appendChild(el("h3", null, "You have an unfinished mock"));
+      const when = new Date(ip.startedAt).toLocaleString();
+      p.appendChild(el("p", { html:
+        `Started ${NP.esc(when)} · <span class="mono" style="font-weight:600">${NP.fmtTime(ip.remaining)}</span>` +
+        " remaining. The clock only runs while the exam is open." }));
+      const track = el("div", { class: "track" });
+      track.appendChild(el("i", { style: `width:${total ? Math.round(100 * done / total) : 0}%` }));
+      p.appendChild(track);
+      p.appendChild(el("div", { style: "display:flex;gap:12px" },
+        el("button", { class: "btn", style: "flex:1", onclick: () => NP.exam.resume() }, "Resume exam"),
+        el("button", {
+          class: "btn danger-outline",
+          onclick: () => NP.modal("Discard exam?",
+            "<p>The in-progress attempt will be deleted and not scored.</p>",
+            [{ label: "Discard", danger: true, action: () => { Store.data.inprogress = null; Store.save(); NP.show(NP.screens.home); } },
+             { label: "Keep it", secondary: true }],
+            { intent: "danger" })
+        }, "Discard")));
+      return p;
+    }
+
+    function courseDone() {
+      const p = el("div", { class: "panel good" });
+      p.appendChild(el("span", { class: "bigtile" }, NP.icon("check", 28, 2.6)));
+      p.appendChild(el("div", { class: "ctitle" }, "Course complete"));
+      p.appendChild(el("p", null,
+        "Every module and checkpoint passed. The full mock exam is unlocked, you've earned the finish line."));
+      p.appendChild(el("button", {
+        class: "btn good big wide", onclick: () => NP.exam.startIntro()
+      }, "Take the full mock exam", NP.icon("arrow", 18)));
+      p.appendChild(el("div", { class: "cmeta" }, "75 questions · 90:00 · pass at 720"));
+      return p;
+    }
+
+    function readiness(steps, uIdx, pct, complete) {
+      const card = el("div", { class: "card", style: "margin:0" });
+      const headRow = el("div", { class: "cardhead" },
+        el("h3", null, "Mock-exam readiness"));
+      headRow.appendChild(complete
+        ? el("span", { class: "lockpill good" }, NP.icon("check", 13, 3), "Unlocked")
+        : el("span", { class: "lockpill" }, NP.icon("lock", 13), "Locked · unlocks at 100%"));
+      card.appendChild(headRow);
+
+      // One segment per unit, filled by that unit's own completion.
+      const units = window.NETCOURSE.units || [];
+      const rail = el("div", { class: "units" });
+      let idx = 0;
+      units.forEach((u, i) => {
+        const n = u.modules.length + (u.checkpoint ? 1 : 0);
+        const mine = steps.slice(idx, idx + n);
+        const doneN = mine.filter((s, k) => idx + k < uIdx).length;
+        idx += n;
+        const upct = n ? Math.round(100 * doneN / n) : 0;
+        const isDone = doneN === n;
+        const isCur = !isDone && doneN > 0 || (!isDone && uIdx >= idx - n && uIdx < idx);
+        const cell = el("div", { class: "u" + (isDone ? " done" : isCur ? " cur" : "") });
+        const seg = el("div", { class: "useg" });
+        if (isCur && upct > 0) {
+          seg.style.background =
+            `linear-gradient(90deg, var(--accent) ${upct}%, var(--sub2) ${upct}%)`;
+        }
+        cell.appendChild(seg);
+        cell.appendChild(el("span", { class: "ulbl" },
+          "U" + (i + 1) + (isDone ? " ✓" : isCur ? " ···" : "")));
+        rail.appendChild(cell);
+      });
+      card.appendChild(rail);
+
+      const doneSteps = steps.filter((s, i) => i < uIdx).length;
+      const foot = el("div", { class: "readyfoot" });
+      foot.appendChild(el("div", { class: "msg" }, complete
+        ? "The mock is unlocked. 75 questions, 90 minutes."
+        : "Complete the course to unlock the full 75-question mock."));
+      foot.appendChild(el("div", { class: "num" },
+        el("b", null, pct + "%"),
+        el("span", null, ` · ${doneSteps} / ${steps.length} steps`)));
+      card.appendChild(foot);
+      return card;
+    }
+
+    /* Bars come only from module quizzes that actually have a recorded best score. */
+    function quizChart(steps) {
+      const prog = C ? C.progress() : null;
+      if (!prog) return null;
+      const scores = [];
+      steps.forEach(s => {
+        const rec = s.kind === "module" ? prog.modules[s.item.id] : prog.checkpoints[s.item.id];
+        if (rec && rec.best != null) scores.push({ title: s.item.title, best: rec.best });
+      });
+      if (!scores.length) return null;
+
+      const recent = scores.slice(-6);
+      const card = el("div", { class: "card", style: "margin:0" });
+      card.appendChild(el("div", { class: "cardhead" },
+        el("h3", null, "Recent quiz performance"),
+        el("span", { class: "note" }, `last ${recent.length} ${recent.length === 1 ? "quiz" : "quizzes"}`)));
+
+      const chart = el("div", { class: "qchart" });
+      const plot = el("div", { class: "qplot" });
+      const labels = el("div", { class: "qlabels" });
+      recent.forEach((s, i) => {
+        const bar = el("div", { class: "bar", style: `height:${Math.max(4, s.best)}%` });
+        plot.appendChild(el("div", {
+          class: "qb" + (s.best < 75 ? " fail" : "") + (i === recent.length - 1 ? " latest" : ""),
+          title: s.title + ": best " + s.best + "%"
+        }, bar));
+        labels.appendChild(el("span", null, s.best + "%"));
+      });
+      plot.appendChild(el("div", { class: "passline" })); // sits at 75% of the plot box
+      chart.appendChild(plot);
+      chart.appendChild(labels);
+      card.appendChild(chart);
+
+      const above = recent.filter(s => s.best >= 75).length;
+      card.appendChild(el("p", { class: "takeaway" },
+        `Dashed line marks the 75% pass mark. ${above} of ${recent.length} at or above it.`));
+      return card;
+    }
+
+    function struggling() {
+      const ids = Store.data.missed.filter(id => NP.byId[id]);
+      const card = el("div", { class: "card", style: "margin:0" });
+      if (!ids.length) {
+        card.appendChild(el("div", { class: "railhead" },
+          el("span", { class: "tile good" }, NP.icon("check", 19, 2.6)),
+          el("div", null,
+            el("div", { class: "lbl" }, "What you're struggling with"),
+            el("div", { class: "val" }, "Nothing to re-drill"))));
+        card.appendChild(el("p", { style: "font-size:13px;color:var(--muted);margin:14px 0 0" },
+          "Misses from mocks and tutor mode land here automatically."));
+        return card;
+      }
+      card.appendChild(el("div", { class: "railhead" },
+        el("span", { class: "tile bad" }, NP.icon("x", 19, 2.4)),
+        el("div", null,
+          el("div", { class: "lbl" }, "What you're struggling with"),
+          el("div", { class: "val" }, `${ids.length} missed question${ids.length === 1 ? "" : "s"}`))));
+
+      const byDom = {};
+      ids.forEach(id => { const d = NP.byId[id].domain; byDom[d] = (byDom[d] || 0) + 1; });
+      const tags = el("div", { style: "display:flex;gap:6px;margin:15px 0;flex-wrap:wrap" });
+      Object.keys(byDom).sort((a, b) => byDom[b] - byDom[a]).forEach(d => {
+        tags.appendChild(el("span", { class: "pill", title: NP.DOMAINS[d] }, `D${d} · ${byDom[d]}`));
+      });
+      card.appendChild(tags);
+      card.appendChild(el("button", {
+        class: "btn soft wide", onclick: () => NP.tutor.startDeck(ids)
+      }, "Drill the deck"));
+      card.appendChild(el("button", {
+        class: "linkish", style: "margin-top:8px", onclick: () => NP.show(NP.screens.missed)
+      }, "View the deck"));
+      return card;
+    }
+
+    function courseMap(steps, uIdx) {
+      const card = el("div", { class: "card", style: "margin:0" });
+      card.appendChild(el("h3", null, "Course map"));
+      const list = el("div", { class: "cmap" });
+      let idx = 0;
+      (window.NETCOURSE.units || []).forEach(u => {
+        const n = u.modules.length + (u.checkpoint ? 1 : 0);
+        const start = idx, end = idx + n;
+        idx = end;
+        const doneN = Math.max(0, Math.min(n, uIdx - start));
+        const isDone = doneN === n;
+        const isCur = !isDone && uIdx >= start && uIdx < end;
+        const row = el("div", {
+          class: "row " + (isDone ? "done" : isCur ? "cur" : "locked")
+        });
+        row.appendChild(el("span", { class: "dot" },
+          isDone ? NP.icon("check", 13, 3.4) : isCur ? NP.icon("play", 11) : NP.icon("lock", 12)));
+        row.appendChild(el("span", { class: "nm" }, u.title));
+        if (isDone) row.appendChild(el("span", { class: "st" }, "done"));
+        else if (isCur) row.appendChild(el("span", { class: "st" }, `${doneN}/${n}`));
+        list.appendChild(row);
+      });
+      card.appendChild(list);
+      return card;
+    }
+
+    function quickTools() {
+      const tools = el("div", { class: "tools" });
+      const tool = (icon, t1, t2, fn) => tools.appendChild(el("button", { class: "tool", onclick: fn },
+        el("span", { class: "tile" }, NP.icon(icon, 18)),
+        el("span", { class: "txt" },
+          el("span", { class: "t1" }, t1),
+          el("span", { class: "t2" }, t2)),
+        el("span", { class: "chev" }, NP.icon("chevR", 17))));
+      tool("tutor", "Tutor mode", "Untimed practice by domain", () => NP.show(NP.screens.tutor));
+      tool("book", "Reference sheets", "Ports · OSI · methodology", () => NP.show(NP.screens.sheets));
+      tool("chart", "Score history", "Past attempts and trend", () => NP.show(NP.screens.history));
+      return tools;
+    }
+  };
+
+  /* ============ score history ============ */
+
+  NP.screens.history = function (root) {
+    const el = NP.el;
+    const { head, stage, inner } = NP.chrome("History");
+    root.appendChild(head); root.appendChild(stage);
+
+    inner.appendChild(el("h1", { class: "screen-title" }, "Score History"));
+    const at = Store.data.attempts;
+
+    if (!at.length) {
+      inner.appendChild(el("p", { class: "screen-sub" }, "Every completed mock lands here."));
+      const card = el("div", { class: "card" });
+      const e = el("div", { class: "empty" });
+      e.appendChild(el("div", { class: "tile muted" }, NP.icon("chart", 24)));
+      e.appendChild(el("h3", null, "No completed mocks yet"));
+      e.appendChild(el("p", null,
+        "Finish the course to unlock the mock, then your score trend appears here."));
+      e.appendChild(el("button", {
+        class: "btn", onclick: () => NP.show(NP.screens.course)
+      }, "Go to the course"));
+      card.appendChild(e);
+      inner.appendChild(card);
+      return;
+    }
+
+    inner.appendChild(el("p", { class: "screen-sub" },
+      `${at.length} completed ${at.length === 1 ? "attempt" : "attempts"}. ` +
+      "Scaled scores are estimates."));
     inner.appendChild(NP.results.trendChart(at));
+
     at.slice().reverse().forEach((a, ri) => {
       const i = at.length - 1 - ri;
-      const row = NP.el("div", { class: "attempt-row" });
-      row.appendChild(NP.el("div", null, NP.el("strong", null, `Attempt ${i + 1}`), `: ${new Date(a.date).toLocaleString()}`));
-      row.appendChild(NP.el("div", null,
-        NP.el("strong", { style: "color:" + (a.pass ? "var(--good)" : "var(--bad)") }, a.pass ? "PASS" : "FAIL"),
-        ` · ${a.scaled}/900`));
-      row.appendChild(NP.el("button", { class: "linkish", onclick: () => NP.results.showSaved(i) }, "View report"));
+      const row = el("div", { class: "attempt-row" + (a.pass ? " pass" : "") });
+      row.appendChild(el("div", null,
+        el("strong", null, `Attempt ${i + 1}`),
+        el("span", { class: "date" }, " · " + new Date(a.date).toLocaleString())));
+      row.appendChild(el("div", { class: "right" },
+        el("span", { class: "vd " + (a.pass ? "ok" : "no") },
+          NP.icon(a.pass ? "check" : "x", 14, 2.6), a.pass ? "PASS" : "FAIL"),
+        el("span", { class: "sc" }, String(a.scaled)),
+        el("button", { class: "linkish", onclick: () => NP.results.showSaved(i) }, "View report")));
       inner.appendChild(row);
     });
   };
 
+  /* ============ missed deck ============ */
+
   NP.screens.missed = function (root) {
-    const { bar, stage, inner } = NP.chrome("Missed Questions");
-    root.appendChild(bar); root.appendChild(stage);
-    inner.appendChild(NP.el("h1", { class: "screen-title" }, "Missed Questions Deck"));
+    const el = NP.el;
+    const { head, stage, inner } = NP.chrome();
+    root.appendChild(head); root.appendChild(stage);
+
+    inner.appendChild(el("h1", { class: "screen-title" }, "Missed Questions Deck"));
     const ids = Store.data.missed.filter(id => NP.byId[id]);
+
     if (!ids.length) {
-      inner.appendChild(NP.el("p", { class: "screen-sub" }, "Nothing here yet, misses from mocks and tutor mode land here automatically."));
+      inner.appendChild(el("p", { class: "screen-sub" },
+        "Everything you get wrong lands here for re-drilling."));
+      const card = el("div", { class: "card" });
+      const e = el("div", { class: "empty" });
+      e.appendChild(el("div", { class: "tile good" }, NP.icon("check", 26, 2.2)));
+      e.appendChild(el("h3", null, "Nothing to re-drill"));
+      e.appendChild(el("p", null,
+        "Misses from mocks and tutor mode land here automatically. A clean deck is a good sign."));
+      card.appendChild(e);
+      inner.appendChild(card);
       return;
     }
-    inner.appendChild(NP.el("p", { class: "screen-sub" },
-      `${ids.length} question${ids.length === 1 ? "" : "s"} to re-drill. Answer one correctly here and it graduates out.`));
-    const row = NP.el("div", { class: "btnrow" });
-    row.appendChild(NP.el("button", { class: "bigbtn", onclick: () => NP.tutor.startDeck(ids) }, "Drill the deck"));
-    row.appendChild(NP.el("button", {
-      class: "bigbtn secondary", onclick: () => {
-        NP.modal("Clear deck?", "<p>All missed questions will be removed.</p>", [
-          { label: "Clear", action: () => { Store.data.missed = []; Store.save(); NP.show(NP.screens.missed); } },
-          { label: "Cancel", secondary: true }]);
-      }
-    }, "Clear deck"));
-    inner.appendChild(row);
-    const list = NP.el("div", { style: "margin-top:18px" });
+
+    const card = el("div", { class: "card" });
+    const hd = el("div", { class: "misshead" });
+    hd.appendChild(el("div", null,
+      el("div", { class: "n" }, String(ids.length)),
+      el("div", { class: "l" },
+        `question${ids.length === 1 ? "" : "s"} to re-drill · answer one correctly and it graduates out`)));
+    hd.appendChild(el("button", {
+      class: "btn accent", onclick: () => NP.tutor.startDeck(ids)
+    }, "Drill the deck"));
+    card.appendChild(hd);
+
     ids.forEach(id => {
       const q = NP.byId[id];
-      const d = NP.el("div", { class: "attempt-row" });
-      d.appendChild(NP.el("div", null,
-        NP.el("span", { class: "pill" }, q.items ? "PBQ" : (Array.isArray(q.answer) ? "Multi-select" : "Multiple choice")),
-        NP.el("span", { class: "pill" }, NP.DOMAINS[q.domain] || ""),
-        NP.el("span", { class: "pill" }, q.diff)));
-      const t = (q.title || q.text || "").replace(/<[^>]+>/g, "");
-      d.appendChild(NP.el("div", { style: "flex:1;margin:0 14px;color:#5b6572;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" },
-        t.slice(0, 90) + (t.length > 90 ? "…" : "")));
-      list.appendChild(d);
+      const row = el("div", { class: "missrow" });
+      row.appendChild(el("span", { class: "pill" },
+        NP.isPBQ(q) ? "PBQ" : (Array.isArray(q.answer) ? "Multi" : "MC")));
+      row.appendChild(el("span", { class: "pill", title: NP.DOMAINS[q.domain] }, "D" + q.domain));
+      const t = (q.title || q.text || "").replace(/<[^>]+>/g, "").trim();
+      row.appendChild(el("span", { class: "stem" }, t));
+      card.appendChild(row);
     });
-    inner.appendChild(list);
+
+    card.appendChild(el("button", {
+      class: "btn secondary", style: "margin-top:14px",
+      onclick: () => NP.modal("Clear deck?",
+        `<p>All ${ids.length} missed questions will be removed.</p>`,
+        [{ label: "Clear", danger: true, action: () => { Store.data.missed = []; Store.save(); NP.show(NP.screens.missed); } },
+         { label: "Cancel", secondary: true }],
+        { intent: "danger" })
+    }, "Clear deck"));
+    inner.appendChild(card);
+  };
+
+  /* ============ study sheets ============ */
+
+  const SHEETS = {
+    ports: {
+      label: "Ports & protocols",
+      head: ["Port", "Protocol", "Use"],
+      rows: [
+        ["20/21", "FTP (TCP)", "File transfer (20 data, 21 control)"],
+        ["22", "SSH / SFTP (TCP)", "Secure remote shell & file transfer"],
+        ["23", "Telnet (TCP)", "Insecure remote shell: avoid"],
+        ["25", "SMTP (TCP)", "Mail transfer between servers"],
+        ["53", "DNS (UDP/TCP)", "Name resolution (TCP for zone transfers)"],
+        ["67/68", "DHCP (UDP)", "Address assignment (67 server, 68 client)"],
+        ["69", "TFTP (UDP)", "Trivial file transfer (firmware, configs)"],
+        ["80", "HTTP (TCP)", "Web, unencrypted"],
+        ["110", "POP3 (TCP)", "Mail retrieval (download-and-delete)"],
+        ["123", "NTP (UDP)", "Time synchronization"],
+        ["143", "IMAP (TCP)", "Mail retrieval (server-side folders)"],
+        ["161/162", "SNMP (UDP)", "Device monitoring (162 = traps)"],
+        ["389", "LDAP (TCP)", "Directory services"],
+        ["443", "HTTPS (TCP)", "Web over TLS"],
+        ["445", "SMB (TCP)", "Windows file/print sharing"],
+        ["514", "Syslog (UDP)", "Centralized logging"],
+        ["587", "SMTP-submission (TCP)", "Authenticated mail submission (TLS)"],
+        ["636", "LDAPS (TCP)", "LDAP over TLS"],
+        ["1433", "SQL Server (TCP)", "Microsoft database"],
+        ["3389", "RDP (TCP)", "Remote Desktop"],
+        ["5060/5061", "SIP (TCP/UDP)", "VoIP call setup (5061 = TLS)"]
+      ],
+      note: "Header stays pinned while you scroll · 21 ports total"
+    },
+    osi: {
+      label: "OSI model",
+      head: ["#", "Layer", "Unit", "Examples / devices"],
+      rows: [
+        ["7", "Application", "Data", "HTTP, DNS, SMTP"],
+        ["6", "Presentation", "Data", "TLS, encoding, compression"],
+        ["5", "Session", "Data", "Session setup/teardown, API sessions"],
+        ["4", "Transport", "Segment", "TCP, UDP, port numbers"],
+        ["3", "Network", "Packet", "IP, ICMP, routers"],
+        ["2", "Data Link", "Frame", "Ethernet, MAC addresses, switches"],
+        ["1", "Physical", "Bit", "Cables, radio, hubs, transceivers"]
+      ],
+      note: "Mnemonic (bottom-up): Please Do Not Throw Sausage Pizza Away"
+    },
+    ts: {
+      label: "Troubleshooting",
+      head: ["Step", "What you do"],
+      wide: true,
+      rows: [
+        ["1. Identify the problem", "Gather information, question users, determine what changed, duplicate if possible."],
+        ["2. Establish a theory", "Question the obvious; consider multiple approaches (top-down / bottom-up OSI)."],
+        ["3. Test the theory", "If confirmed, plan next steps; if not, establish a new theory or escalate."],
+        ["4. Establish a plan of action", "Identify potential effects before you touch anything."],
+        ["5. Implement the solution", "Or escalate as necessary."],
+        ["6. Verify full functionality", "And, if applicable, implement preventive measures."],
+        ["7. Document", "Findings, actions, outcomes, and lessons learned."]
+      ],
+      note: "The order is examinable. Know it verbatim."
+    }
   };
 
   NP.screens.sheets = function (root) {
-    const { bar, stage, inner } = NP.chrome("Study Sheets");
-    root.appendChild(bar); root.appendChild(stage);
-    inner.appendChild(NP.el("h1", { class: "screen-title" }, "Study Sheets"));
-    inner.appendChild(NP.el("p", { class: "screen-sub" }, "The reference tables the exam assumes you know cold."));
+    const el = NP.el;
+    const { head, stage, inner } = NP.chrome("Reference");
+    root.appendChild(head); root.appendChild(stage);
 
-    const ports = NP.el("div", { class: "card" });
-    ports.innerHTML = `<h3>Common ports & protocols</h3>
-      <table class="sheet-table">
-        <tr><th>Port</th><th>Protocol</th><th>Use</th></tr>
-        <tr><td>20/21</td><td>FTP (TCP)</td><td>File transfer (20 data, 21 control)</td></tr>
-        <tr><td>22</td><td>SSH / SFTP (TCP)</td><td>Secure remote shell & file transfer</td></tr>
-        <tr><td>23</td><td>Telnet (TCP)</td><td>Insecure remote shell: avoid</td></tr>
-        <tr><td>25</td><td>SMTP (TCP)</td><td>Mail transfer between servers</td></tr>
-        <tr><td>53</td><td>DNS (UDP/TCP)</td><td>Name resolution (TCP for zone transfers)</td></tr>
-        <tr><td>67/68</td><td>DHCP (UDP)</td><td>Address assignment (67 server, 68 client)</td></tr>
-        <tr><td>69</td><td>TFTP (UDP)</td><td>Trivial file transfer (firmware, configs)</td></tr>
-        <tr><td>80</td><td>HTTP (TCP)</td><td>Web, unencrypted</td></tr>
-        <tr><td>110</td><td>POP3 (TCP)</td><td>Mail retrieval (download-and-delete)</td></tr>
-        <tr><td>123</td><td>NTP (UDP)</td><td>Time synchronization</td></tr>
-        <tr><td>143</td><td>IMAP (TCP)</td><td>Mail retrieval (server-side folders)</td></tr>
-        <tr><td>161/162</td><td>SNMP (UDP)</td><td>Device monitoring (162 = traps)</td></tr>
-        <tr><td>389</td><td>LDAP (TCP)</td><td>Directory services</td></tr>
-        <tr><td>443</td><td>HTTPS (TCP)</td><td>Web over TLS</td></tr>
-        <tr><td>445</td><td>SMB (TCP)</td><td>Windows file/print sharing</td></tr>
-        <tr><td>514</td><td>Syslog (UDP)</td><td>Centralized logging</td></tr>
-        <tr><td>587</td><td>SMTP-submission (TCP)</td><td>Authenticated mail submission (TLS)</td></tr>
-        <tr><td>636</td><td>LDAPS (TCP)</td><td>LDAP over TLS</td></tr>
-        <tr><td>1433</td><td>SQL Server (TCP)</td><td>Microsoft database</td></tr>
-        <tr><td>3389</td><td>RDP (TCP)</td><td>Remote Desktop</td></tr>
-        <tr><td>5060/5061</td><td>SIP (TCP/UDP)</td><td>VoIP call setup (5061 = TLS)</td></tr>
-      </table>`;
-    inner.appendChild(ports);
+    inner.appendChild(el("h1", { class: "screen-title" }, "Study Sheets"));
+    inner.appendChild(el("p", { class: "screen-sub" },
+      "The reference tables the exam assumes you know cold."));
 
-    const osi = NP.el("div", { class: "card" });
-    osi.innerHTML = `<h3>OSI model</h3>
-      <table class="sheet-table">
-        <tr><th>#</th><th>Layer</th><th>Unit</th><th>Examples / devices</th></tr>
-        <tr><td>7</td><td>Application</td><td>Data</td><td>HTTP, DNS, SMTP</td></tr>
-        <tr><td>6</td><td>Presentation</td><td>Data</td><td>TLS, encoding, compression</td></tr>
-        <tr><td>5</td><td>Session</td><td>Data</td><td>Session setup/teardown, API sessions</td></tr>
-        <tr><td>4</td><td>Transport</td><td>Segment</td><td>TCP, UDP, port numbers</td></tr>
-        <tr><td>3</td><td>Network</td><td>Packet</td><td>IP, ICMP, routers</td></tr>
-        <tr><td>2</td><td>Data Link</td><td>Frame</td><td>Ethernet, MAC addresses, switches</td></tr>
-        <tr><td>1</td><td>Physical</td><td>Bit</td><td>Cables, radio, hubs, transceivers</td></tr>
-      </table>
-      <p style="color:var(--muted)">Mnemonic (bottom-up): <em>Please Do Not Throw Sausage Pizza Away</em>.</p>`;
-    inner.appendChild(osi);
+    let cur = "ports";
+    const tabs = el("div", { class: "tabs" });
+    const body = el("div");
 
-    const ts = NP.el("div", { class: "card" });
-    ts.innerHTML = `<h3>CompTIA troubleshooting methodology (know the order)</h3>
-      <ol style="font-size:14.5px;line-height:1.7">
-        <li><b>Identify the problem</b>: gather information, question users, determine what changed, duplicate if possible.</li>
-        <li><b>Establish a theory of probable cause</b>: question the obvious; consider multiple approaches (top-down/bottom-up OSI).</li>
-        <li><b>Test the theory</b>, if confirmed, plan next steps; if not, establish a new theory or escalate.</li>
-        <li><b>Establish a plan of action</b> and identify potential effects.</li>
-        <li><b>Implement the solution</b> or escalate as necessary.</li>
-        <li><b>Verify full system functionality</b> and, if applicable, implement preventive measures.</li>
-        <li><b>Document</b> findings, actions, outcomes, and lessons learned.</li>
-      </ol>`;
-    inner.appendChild(ts);
+    Object.keys(SHEETS).forEach(k => {
+      tabs.appendChild(el("button", {
+        class: cur === k ? "on" : "",
+        onclick: e => {
+          cur = k;
+          tabs.querySelectorAll("button").forEach(b => b.classList.remove("on"));
+          e.currentTarget.classList.add("on");
+          paint();
+        }
+      }, SHEETS[k].label));
+    });
+    inner.appendChild(tabs);
+    inner.appendChild(body);
+
+    paint();
+
+    function paint() {
+      const s = SHEETS[cur];
+      body.innerHTML = "";
+      const wrap = el("div", { class: "tablewrap" });
+      const table = el("table", { class: "sheet-table" });
+      const thead = el("thead");
+      const hr = el("tr");
+      s.head.forEach(h => hr.appendChild(el("th", null, h)));
+      thead.appendChild(hr);
+      table.appendChild(thead);
+      const tb = el("tbody");
+      s.rows.forEach(r => {
+        const tr = el("tr");
+        r.forEach((c, i) => tr.appendChild(el("td", { class: i === 0 && s.wide ? "wide" : "" }, c)));
+        tb.appendChild(tr);
+      });
+      table.appendChild(tb);
+      wrap.appendChild(table);
+      body.appendChild(wrap);
+      body.appendChild(el("div", { class: "sheetnote" }, s.note));
+    }
   };
 
   /* ---------------- boot ---------------- */
