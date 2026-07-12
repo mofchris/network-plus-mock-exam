@@ -19,9 +19,12 @@
       this.data.inprogress = this.data.inprogress || null;
       return this.data;
     },
-    save() {
+    save(data, fromSync) {
+      if (data) this.data = data;
+      this.data._savedAt = Date.now();
       try { localStorage.setItem(this.key, JSON.stringify(this.data)); }
       catch (e) { /* keep running in-memory */ }
+      if (!fromSync && NP.sync) NP.sync.onLocalSave();
     }
   };
   NP.store = Store;
@@ -217,18 +220,23 @@
   /* Study header with product identity + nav. `active` is the nav label to mark. */
   NP.chrome = function (active) {
     const el = NP.el;
+    const syncMount = el("div", { class: "syncwrap" });
     const head = el("div", { class: "tophead" },
       el("div", { class: "brandwrap" },
         el("span", { class: "logo" }, NP.icon("logo", 20)),
         el("div", { class: "names" },
           el("div", { class: "pname" }, "Network+ Simulator"),
           el("div", { class: "psub" }, "N10-009 · independent study tool"))),
-      el("nav", { class: "topnav", "aria-label": "Main" },
-        ...NAV.map(([label, go]) => el("button", {
-          class: active === label ? "on" : "",
-          "aria-current": active === label ? "page" : null,
-          onclick: go
-        }, label))));
+      el("div", { class: "topright" },
+        el("nav", { class: "topnav", "aria-label": "Main" },
+          ...NAV.map(([label, go]) => el("button", {
+            class: active === label ? "on" : "",
+            "aria-current": active === label ? "page" : null,
+            onclick: go
+          }, label))),
+        syncMount));
+
+    if (NP.sync) NP.sync.mountHeader(syncMount);
 
     const stage = el("div", { class: "stage" });
     const inner = el("div", { class: "stage-inner screen-in" });
@@ -811,5 +819,10 @@
   /* ---------------- boot ---------------- */
 
   NP.buildIndex();
+  NP.sync = StudySync.initSync(NP, {
+    app: "netplus",
+    load: () => Store.load(),
+    save: (data, fromSync) => Store.save(data, fromSync)
+  });
   NP.show(NP.screens.home);
 })();

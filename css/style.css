@@ -120,6 +120,77 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .topnav button:hover { color: #fff; background: rgba(255, 255, 255, .08); }
 .topnav button.on { background: rgba(255, 255, 255, .13); color: #fff; font-weight: 600; }
 
+/* ---- sync ---- */
+.topright { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.syncwrap { display: flex; align-items: center; gap: 10px; }
+.syncwrap .syncbtn { min-height: 34px; padding: 7px 14px; font-size: 13px; }
+.syncwrap .syncnote {
+  font-family: var(--font-mono); font-size: 11px; color: var(--amber);
+  white-space: nowrap;
+}
+.syncpill {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .14);
+  color: #fff; border-radius: var(--r-pill); padding: 6px 13px 6px 11px;
+  font-size: 13px; font-weight: 600; max-width: 190px;
+  transition: background var(--mo-micro) var(--ease-out);
+}
+.syncpill:hover { background: rgba(255, 255, 255, .14); }
+.syncpill .u { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.syncpill .dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; background: var(--muted); }
+.syncpill .dot.idle { background: var(--good); }
+.syncpill .dot.offline { background: var(--muted); }
+.syncpill .dot.error { background: var(--bad); }
+.syncpill .dot.syncing { background: var(--amber); animation: syncpulse 1s var(--ease-out) infinite; }
+@keyframes syncpulse { 50% { opacity: .3; } }
+
+/* auth modal (Task 6) */
+.authtabs { display: flex; gap: 6px; margin-bottom: 16px; }
+.authtabs button {
+  flex: 1; padding: 9px; border-radius: var(--r-input); border: 1px solid var(--line);
+  background: var(--sub); color: var(--muted); font-size: 13.5px; font-weight: 600;
+}
+.authtabs button.on { background: var(--accentsoft); border-color: var(--accent-border); color: var(--accent2); }
+.authfield { margin-bottom: 12px; }
+.authfield label { display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 5px; }
+.authfield input {
+  width: 100%; padding: 10px 12px; border: 1px solid var(--line);
+  border-radius: var(--r-input); font-size: 14px; background: var(--paper); color: var(--ink);
+}
+/* segmented six-cell PIN entry: cells are visual only; one opacity:0 input
+   sits over the whole row as the source of truth + full-width hit target */
+.pinfield .pin-wrap { position: relative; display: inline-block; }
+.pin-cells { display: flex; gap: 8px; }
+.pin-cell {
+  width: 42px; height: 42px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--line); background: var(--paper);
+  border-radius: var(--r-input);
+  font-family: var(--font-mono); font-size: 20px; line-height: 1; color: var(--ink);
+  transition: border-color var(--mo-micro) var(--ease-out), box-shadow var(--mo-micro) var(--ease-out),
+    background-color var(--mo-micro) var(--ease-out);
+}
+/* masked cell: larger, soft-gray dot (bank PIN-pad look). The briefly-revealed
+   real digit keeps the base --ink color + 20px size for contrast. */
+.pin-cell.masked { color: var(--muted); font-size: 30px; }
+.pin-cell.active { border-color: var(--accent); background: var(--accentsoft); box-shadow: var(--focus-ring); }
+.pin-wrap input.pin-input {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  margin: 0; padding: 0; border: 0; background: transparent;
+  opacity: 0; caret-color: transparent; cursor: text; font-size: 16px; /* 16px avoids iOS focus zoom */
+}
+.autherr { color: var(--bad); font-size: 12.5px; margin: 4px 0 0; min-height: 1em; }
+.authlink { margin-top: 4px; }
+.ts-container { margin: 10px 0; min-height: 0; }
+.recovery-code {
+  font-family: var(--font-mono); font-size: 22px; font-weight: 600; letter-spacing: .12em;
+  text-align: center; padding: 16px; margin: 14px 0;
+  background: var(--sub); border: 1px solid var(--line); border-radius: var(--r-input);
+  word-break: break-all;
+}
+.recovery-warn { color: var(--amber); font-size: 13px; }
+.syncmeta { color: var(--muted); font-size: 13px; }
+
 /* breadcrumb bar */
 .crumb {
   display: flex; align-items: center; gap: 11px;
