@@ -194,6 +194,16 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .syncpill .dot.error { background: var(--bad); }
 .syncpill .dot.syncing { background: var(--amber); animation: syncpulse 1s var(--ease-out) infinite; }
 @keyframes syncpulse { 50% { opacity: .3; } }
+.themebtn {
+  flex: 0 0 auto;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; padding: 0;
+  background: var(--overlay-08); border: 1px solid var(--overlay-14);
+  color: var(--on-dark); border-radius: var(--r-ctl);
+  font-size: 16px; line-height: 1;
+  transition: background var(--mo-micro) var(--ease-out);
+}
+.themebtn:hover { background: var(--overlay-14); }
 
 /* auth modal (Task 6) */
 .authtabs { display: flex; gap: 6px; margin-bottom: 16px; }
@@ -1179,6 +1189,18 @@ button:disabled { opacity: .5; cursor: not-allowed; }
   .stage-inner { padding: 20px 16px 32px; }
   .tophead, .crumb { padding: 0 16px; }
   .tophead { height: auto; min-height: 60px; padding: 10px 16px; flex-wrap: wrap; }
+
+  /* two controlled rows: [brand · sync-dot · theme] / [nav full width] */
+  .tophead { align-items: center; row-gap: 10px; column-gap: 12px; }
+  .topright { display: contents; }
+  .brandwrap { order: 0; margin-right: auto; flex: 1 1 0; } /* basis 0 keeps brand on row 1; grows into leftover */
+  .psub { overflow: hidden; text-overflow: ellipsis; }      /* subtitle ellipsizes instead of pushing the theme button to a third row */
+  .syncwrap { order: 1; }
+  .themebtn { order: 2; width: 40px; height: 40px; }
+  .topnav { order: 3; flex-basis: 100%; width: 100%; margin-top: 2px; }
+  .topnav button { flex: 1; text-align: center; padding: 8px 6px; }
+  .syncpill { max-width: none; padding: 6px; }
+  .syncpill .u { display: none; }
 
   /* exam header condenses: title + timer inline, counter below */
   .examhead {
