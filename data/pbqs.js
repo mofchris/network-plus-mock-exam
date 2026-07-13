@@ -99,24 +99,24 @@ Destination host unreachable.</div>
       stem: `<p>A small office is being built out as shown. Select the correct component for each labeled position.</p>
         <div class="figure">
         <svg viewBox="0 0 640 210" xmlns="http://www.w3.org/2000/svg">
-          <rect x="16" y="80" width="96" height="46" fill="#fff" stroke="#333" stroke-width="1.5" rx="4"/>
-          <text x="64" y="100" font-size="12" text-anchor="middle" fill="#16181c">Internet</text>
-          <text x="64" y="116" font-size="11" text-anchor="middle" fill="#5b6572">(ISP)</text>
-          <line x1="112" y1="103" x2="176" y2="103" stroke="#333" stroke-width="1.5"/>
-          <rect x="176" y="80" width="96" height="46" fill="#eef1f5" stroke="#333" stroke-width="1.5" rx="4"/>
-          <text x="224" y="107" font-size="13" text-anchor="middle" font-weight="bold" fill="#16181c">A</text>
-          <line x1="272" y1="103" x2="336" y2="103" stroke="#333" stroke-width="1.5"/>
-          <rect x="336" y="80" width="96" height="46" fill="#eef1f5" stroke="#333" stroke-width="1.5" rx="4"/>
-          <text x="384" y="107" font-size="13" text-anchor="middle" font-weight="bold" fill="#16181c">B</text>
-          <line x1="432" y1="103" x2="496" y2="103" stroke="#333" stroke-width="1.5"/>
-          <rect x="496" y="80" width="120" height="46" fill="#eef1f5" stroke="#333" stroke-width="1.5" rx="4"/>
-          <text x="556" y="107" font-size="13" text-anchor="middle" font-weight="bold" fill="#16181c">C</text>
-          <line x1="384" y1="126" x2="384" y2="166" stroke="#333" stroke-width="1.5"/>
-          <rect x="320" y="166" width="128" height="34" fill="#fff" stroke="#333" stroke-width="1.5" rx="4"/>
-          <text x="384" y="188" font-size="11.5" text-anchor="middle" fill="#16181c">Public web server</text>
-          <line x1="556" y1="126" x2="556" y2="166" stroke="#333" stroke-width="1.5"/>
-          <rect x="492" y="166" width="128" height="34" fill="#fff" stroke="#333" stroke-width="1.5" rx="4"/>
-          <text x="556" y="188" font-size="11.5" text-anchor="middle" fill="#16181c">Employee PCs</text>
+          <rect x="16" y="80" width="96" height="46" style="fill:var(--diagram-node);stroke:var(--diagram-stroke)" stroke-width="1.5" rx="4"/>
+          <text x="64" y="100" font-size="12" text-anchor="middle" style="fill:var(--diagram-label)">Internet</text>
+          <text x="64" y="116" font-size="11" text-anchor="middle" style="fill:var(--diagram-label-muted)">(ISP)</text>
+          <line x1="112" y1="103" x2="176" y2="103" style="stroke:var(--diagram-stroke)" stroke-width="1.5"/>
+          <rect x="176" y="80" width="96" height="46" style="fill:var(--diagram-node-alt);stroke:var(--diagram-stroke)" stroke-width="1.5" rx="4"/>
+          <text x="224" y="107" font-size="13" text-anchor="middle" font-weight="bold" style="fill:var(--diagram-label)">A</text>
+          <line x1="272" y1="103" x2="336" y2="103" style="stroke:var(--diagram-stroke)" stroke-width="1.5"/>
+          <rect x="336" y="80" width="96" height="46" style="fill:var(--diagram-node-alt);stroke:var(--diagram-stroke)" stroke-width="1.5" rx="4"/>
+          <text x="384" y="107" font-size="13" text-anchor="middle" font-weight="bold" style="fill:var(--diagram-label)">B</text>
+          <line x1="432" y1="103" x2="496" y2="103" style="stroke:var(--diagram-stroke)" stroke-width="1.5"/>
+          <rect x="496" y="80" width="120" height="46" style="fill:var(--diagram-node-alt);stroke:var(--diagram-stroke)" stroke-width="1.5" rx="4"/>
+          <text x="556" y="107" font-size="13" text-anchor="middle" font-weight="bold" style="fill:var(--diagram-label)">C</text>
+          <line x1="384" y1="126" x2="384" y2="166" style="stroke:var(--diagram-stroke)" stroke-width="1.5"/>
+          <rect x="320" y="166" width="128" height="34" style="fill:var(--diagram-node);stroke:var(--diagram-stroke)" stroke-width="1.5" rx="4"/>
+          <text x="384" y="188" font-size="11.5" text-anchor="middle" style="fill:var(--diagram-label)">Public web server</text>
+          <line x1="556" y1="126" x2="556" y2="166" style="stroke:var(--diagram-stroke)" stroke-width="1.5"/>
+          <rect x="492" y="166" width="128" height="34" style="fill:var(--diagram-node);stroke:var(--diagram-stroke)" stroke-width="1.5" rx="4"/>
+          <text x="556" y="188" font-size="11.5" text-anchor="middle" style="fill:var(--diagram-label)">Employee PCs</text>
         </svg>
         </div>
         <p>Position <b>B</b> connects the public web server; position <b>C</b> connects employee workstations.</p>`,

@@ -191,36 +191,36 @@
     const xAt = i => n > 1 ? 70 + (630 - 70) * i / (n - 1) : (70 + 630) / 2;
 
     for (const v of [900, 700, 500, 300]) {
-      svg.appendChild(sv("line", { x1: X0, y1: yAt(v), x2: X1, y2: yAt(v), stroke: "#e3e7ec", "stroke-width": 1 }));
+      svg.appendChild(sv("line", { x1: X0, y1: yAt(v), x2: X1, y2: yAt(v), "stroke-width": 1, style: "stroke:var(--chart-trend-grid)" }));
       svg.appendChild(sv("text", {
         x: X0 - 8, y: yAt(v) + 4, "text-anchor": "end",
-        "font-size": 11, "font-family": "IBM Plex Mono, monospace", fill: "#5c6674"
+        "font-size": 11, "font-family": "IBM Plex Mono, monospace", style: "fill:var(--muted)"
       }, String(v)));
     }
 
     // pass line at 720
     svg.appendChild(sv("line", {
       x1: X0, y1: yAt(720), x2: X1, y2: yAt(720),
-      stroke: "#177a44", "stroke-width": 1.5, "stroke-dasharray": "6,4"
+      "stroke-width": 1.5, "stroke-dasharray": "6,4", style: "stroke:var(--good)"
     }));
     svg.appendChild(sv("text", {
       x: X1 + 6, y: yAt(720) + 4, "font-size": 11.5,
-      "font-family": "IBM Plex Mono, monospace", fill: "#177a44", "font-weight": "700"
+      "font-family": "IBM Plex Mono, monospace", "font-weight": "700", style: "fill:var(--good)"
     }, "720"));
 
     const vals = attempts.map(a => a.scaled);
     svg.appendChild(sv("polyline", {
       points: vals.map((v, i) => `${xAt(i)},${yAt(v)}`).join(" "),
-      fill: "none", stroke: "#2f63c6", "stroke-width": 2.5
+      fill: "none", "stroke-width": 2.5, style: "stroke:var(--accent)"
     }));
     vals.forEach((v, i) => {
       svg.appendChild(sv("circle", {
         cx: xAt(i), cy: yAt(v), r: i === n - 1 ? 5.5 : 5,
-        fill: attempts[i].pass ? "#177a44" : "#b32d2d", stroke: "#fff", "stroke-width": 2
+        "stroke-width": 2, style: `fill:${attempts[i].pass ? "var(--good)" : "var(--bad)"};stroke:var(--paper)`
       }));
       svg.appendChild(sv("text", {
         x: xAt(i), y: H - 8, "text-anchor": "middle", "font-size": 11,
-        "font-family": "IBM Plex Mono, monospace", fill: "#5c6674"
+        "font-family": "IBM Plex Mono, monospace", style: "fill:var(--muted)"
       }, String(i + 1)));
     });
 
