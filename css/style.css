@@ -1243,3 +1243,96 @@ button:disabled { opacity: .5; cursor: not-allowed; }
     scroll-behavior: auto !important;
   }
 }
+
+/* ================= dark theme ================= */
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* surfaces — same ladder as GRE (sibling-consistent) */
+  --page:   #090d13;
+  --sub:    #0e131c;
+  --paper:  #171e29;
+  --sub2:   #1f2836;
+  --faint:  #273143;
+  --line:   #333d51;
+  --line-hover: #3f4a60;
+  --tool-line-hover: #3f4a60;
+
+  /* ink */
+  --ink:        #e8ecf3;   /* 14.1:1 on --paper */
+  --muted:      #9aa6b6;   /* 6.8:1 on --paper */
+  --figure-ink: #e8ecf3;
+  --pill-ink:   #c2cbd8;
+  --lesson-ink: #d4dae4;
+
+  /* chrome */
+  --headink:        #141c2b;
+  --headink2:       #1c2740;
+  --headink-hover:  #1f2a3d;
+  --exam-head:      #1a2432;   /* elevated exam tier */
+  --exam-head-hover:#212c3d;
+  --on-dark: #eef2f8;
+
+  /* accent */
+  --accent:        #5a8fe0;
+  --accent2:       #9cc0f5;    /* 9.0:1 on --paper */
+  --accentsoft:    #1b2942;
+  --accent-border: #34517d;
+  --accent-lite:   #7aa6ec;
+  --accent-glow:   rgba(122,166,236,.28);
+  --accentsoft-hover: #223458;
+  --sel-shadow:    rgba(90,143,224,.30);
+  --next-shadow:   rgba(90,143,224,.30);
+
+  --teal: #4bb8c4;
+
+  /* semantic */
+  --good: #46b071;  --goodsoft: #16311f;  --good-border: #2f6b45;
+  --good-tint: #12261a; --good-chip: #2b5a3c; --good-row: #234a30;
+  --good-tint-hover: #16311f; --good-alt: #3f9a68;
+  --good-border2: #2f6b45; --good-ink: #8fd3a9; --good-hover: #3a9560;
+  --good-grad: #2f8f57;
+
+  --bad: #e5716b;   --badsoft: #331b1b;   --bad-border: #6e3230;
+  --bad-hover: #c85852; --bad-grad: #c1524d;
+
+  --amber: #dca63f; --ambersoft: #2c2312; --amber-border: #5e4a24;
+  --amber-soft-border: #5e4a24; --amber-ink: #e0b878;
+  --track-amber: #3a2f16;
+
+  /* markers + fields */
+  --marker-border: #6b788c;  --marker-border-dim: #4a5568;
+  --field-bg: #10151e;  --field-border: #46536a;
+
+  /* terminal — elevated exam device (on --exam-head bg) */
+  --terminal-ink: #cdd9e2;  --terminal-hl: #f0b866;  --terminal-err: #e8918f;
+
+  /* exam timers + hairline */
+  --timer-low: #ff9a9a;  --timer-low-lbl: #ffb3b3;  --hairline-track: #273143;
+
+  /* hovers */
+  --hover-soft: #202a39;  --white-hover: #202a39;
+
+  /* shadows → borders */
+  --shadow-card:  0 0 0 1px rgba(0,0,0,.35);
+  --shadow-frame: 0 0 0 1px rgba(0,0,0,.4);
+  --shadow-modal: 0 24px 60px rgba(0,0,0,.7);
+
+  --focus-ring: 0 0 0 3px rgba(122,166,236,.55);
+  --veil: rgba(4,7,12,.72);
+
+  /* white-alpha overlays on permanently-dark chrome — restated for intent */
+  --on-dark-70: rgba(255,255,255,.66); --on-dark-60: rgba(255,255,255,.58);
+  --on-dark-50: rgba(255,255,255,.5);  --on-dark-45: rgba(255,255,255,.45);
+  --overlay-08: rgba(255,255,255,.06); --overlay-13: rgba(255,255,255,.11);
+  --overlay-14: rgba(255,255,255,.13); --overlay-18: rgba(255,255,255,.16);
+}
+
+/* Dark-only usage fixes (outside the token block; light mode untouched).
+   This stylesheet uses --headink both as chrome surface AND as heading ink
+   (.pbq-title), and --white-hover as the hover tint of the white hero CTA
+   (.btn.white). The dark retunes above turn both into dark-on-dark text
+   (~1.3:1). Scope the two affected usages back to legible values. */
+[data-theme="dark"] .pbq-title { color: var(--ink); }
+[data-theme="dark"] .btn.white:hover:not(:disabled) { background: #dde4ee; }
