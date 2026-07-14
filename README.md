@@ -39,6 +39,8 @@ way to reset a forgotten PIN (there is no email recovery), so save it somewhere 
 - **Study sheets**: common ports and protocols, the OSI model, and the CompTIA seven-step
   troubleshooting methodology.
 - **Missed-questions deck** and score history with a pass-line trend chart.
+- **Dark mode**: follows your device setting automatically, with a header toggle
+  (☀/☾/◐) to override it.
 
 
 ## The study course
