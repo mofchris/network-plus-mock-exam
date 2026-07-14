@@ -215,6 +215,7 @@ button:disabled { opacity: .5; cursor: not-allowed; }
   transition: background var(--mo-micro) var(--ease-out);
 }
 .themebtn:hover { background: var(--overlay-14); }
+.themebtn svg { display: block; }
 
 /* auth modal (Task 6) */
 .authtabs { display: flex; gap: 6px; margin-bottom: 16px; }

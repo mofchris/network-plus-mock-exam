@@ -217,6 +217,33 @@
     ["History", () => NP.show(NP.screens.history)]
   ];
 
+  /* Theme-toggle icons: inline SVG, 18px, viewBox 0 0 24 24, currentColor ink
+     so they follow the button's color in both light and dark themes. */
+  const THEME_SVG_HEAD = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">';
+  const THEME_ICONS = {
+    // sun: solid disc + 8 rays at 45deg steps
+    light: THEME_SVG_HEAD +
+      '<circle cx="12" cy="12" r="4.4"/>' +
+      '<line x1="12" y1="2.5" x2="12" y2="5"/>' +
+      '<line x1="12" y1="2.5" x2="12" y2="5" transform="rotate(45 12 12)"/>' +
+      '<line x1="12" y1="2.5" x2="12" y2="5" transform="rotate(90 12 12)"/>' +
+      '<line x1="12" y1="2.5" x2="12" y2="5" transform="rotate(135 12 12)"/>' +
+      '<line x1="12" y1="2.5" x2="12" y2="5" transform="rotate(180 12 12)"/>' +
+      '<line x1="12" y1="2.5" x2="12" y2="5" transform="rotate(225 12 12)"/>' +
+      '<line x1="12" y1="2.5" x2="12" y2="5" transform="rotate(270 12 12)"/>' +
+      '<line x1="12" y1="2.5" x2="12" y2="5" transform="rotate(315 12 12)"/>' +
+      '</svg>',
+    // moon: single-path crescent
+    dark: THEME_SVG_HEAD +
+      '<path d="M20.4 14.2A8.2 8.2 0 1 1 9.8 3.6a6.6 6.6 0 0 0 10.6 10.6z"/>' +
+      '</svg>',
+    // auto: stroked circle with the left half filled (the ◐ semantic)
+    auto: THEME_SVG_HEAD +
+      '<circle cx="12" cy="12" r="8.2"/>' +
+      '<path d="M12 3.8a8.2 8.2 0 0 0 0 16.4z" fill="currentColor" stroke="none"/>' +
+      '</svg>'
+  };
+
   /* Study header with product identity + nav. `active` is the nav label to mark. */
   NP.chrome = function (active) {
     const el = NP.el;
@@ -227,9 +254,8 @@
       onclick: function () { StudyTheme.cycle(); }
     });
     const paintTheme = function (mode, res) {
-      const glyph = mode === "auto" ? "◐" : (mode === "dark" ? "☾" : "☀");
       const label = mode === "auto" ? "Theme: auto (" + res + ")" : "Theme: " + mode;
-      themeBtn.textContent = glyph;
+      themeBtn.innerHTML = THEME_ICONS[mode] || THEME_ICONS.light;
       themeBtn.setAttribute("aria-label", label);
       themeBtn.setAttribute("title", label);
     };
