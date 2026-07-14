@@ -415,13 +415,53 @@
         headerNode.appendChild(pill);
       }
 
+      // ns.modal only closes via Escape or an explicit button, which strands
+      // touch users with no Escape key. This adds two mobile-safe exits WITHOUT
+      // touching ns.modal: a veil-click (backdrop) close and a visible ✕ in the
+      // card. Both go through modalRef.close, so any wrapping (e.g. the auth
+      // modal's Escape-guard teardown) runs. Listeners live on the veil / a card
+      // child, so they die when ns.modal removes the veil — no window/doc leaks.
+      // Returns setDismissable(bool): the auth recovery handoff calls (false) to
+      // hide the ✕ and make the veil-click inert, mirroring its Escape guard.
+      function attachModalDismiss(modalRef, veil) {
+        var el = ns.el;
+        var dismissable = true;
+        function onVeil(e) {
+          // close ONLY on a direct backdrop click, never a bubble from the card
+          if (dismissable && e.target === veil) modalRef.close();
+        }
+        veil.addEventListener("click", onVeil);
+
+        var card = veil.querySelector(".modal");
+        if (card) card.style.position = "relative"; // anchor the absolute ✕
+        var x = el("button", {
+          type: "button", class: "modal-x", "aria-label": "Close",
+          style: "position:absolute;top:12px;right:12px;width:40px;height:40px;" +
+            "display:inline-flex;align-items:center;justify-content:center;padding:0;" +
+            "border:none;background:transparent;color:var(--muted);font-size:24px;" +
+            "line-height:1;border-radius:var(--r-input);cursor:pointer;"
+        }, "×");
+        x.addEventListener("click", function () { modalRef.close(); });
+        if (card) card.appendChild(x);
+
+        return {
+          setDismissable: function (v) {
+            dismissable = v;
+            // remove (not just hide) the ✕ so it stays out of ns.modal's focus trap
+            if (v) { if (card && !x.parentNode) card.appendChild(x); }
+            else if (x.parentNode) x.parentNode.removeChild(x);
+          }
+        };
+      }
+
       function openAccountModal() {
         var el = ns.el;
+        var metaText = state.status === "offline" ? "Offline — will retry when reconnected."
+          : state.status === "error" ? "Sync hit an error."
+          : "Last synced " + fmtAgo(state.lastSyncedAt) + ".";
         var body = el("div", {},
           el("p", {}, "Signed in as ", el("strong", {}, state.username), "."),
-          el("p", { class: "syncmeta" },
-            state.status === "offline" ? "Offline — will retry when reconnected."
-            : "Last synced " + fmtAgo(state.lastSyncedAt) + "."));
+          el("p", { class: "syncmeta" }, metaText));
         var m = ns.modal("Account", "", [
           { label: "Sign out", danger: true, action: function () { signOut(); } },
           { label: "Close", secondary: true }
@@ -430,6 +470,14 @@
         var veil = document.body.lastElementChild;
         var mbody = veil.querySelector(".mbody");
         if (mbody) mbody.appendChild(body);
+        // error state: offer an in-place retry; offline keeps its existing copy
+        if (state.status === "error") {
+          body.appendChild(el("button", {
+            class: "btn soft", style: "margin-top:12px",
+            onclick: function () { m.close(); syncNow(); }
+          }, "Retry now"));
+        }
+        attachModalDismiss(m, veil);
         return m;
       }
 
@@ -457,6 +505,8 @@
         var modalRef = ns.modal("Sync your progress", "", [], {});
         var veil = document.body.lastElementChild;
         var mbody = veil.querySelector(".mbody");
+        // mobile-safe dismissal (veil-click + ✕); disabled during recovery handoff
+        var dismiss = attachModalDismiss(modalRef, veil);
 
         // ---- Escape guard used ONLY for the recovery handoff ----
         // Attached only while the un-dismissable handoff state is shown, and
@@ -690,8 +740,20 @@
 
         function handleAuthFail(r, err) {
           if (r.status === 403 && r.body && r.body.needsCaptcha) {
-            // signin: turn the captcha on and re-render so the user can verify + retry
-            if (mode === "signin") { showCaptcha = true; render(); return; }
+            // signin: turn the captcha on and re-render so the user can verify + retry.
+            // Capture the entered username + PIN BEFORE render() wipes mbody, then
+            // repopulate so the 403 re-render doesn't force the user to retype.
+            if (mode === "signin") {
+              var keepUser = val("au-user"), keepPin = val("au-pin");
+              showCaptcha = true;
+              render();
+              var uEl = document.getElementById("au-user");
+              if (uEl) uEl.value = keepUser;
+              var pEl = document.getElementById("au-pin");
+              // dispatch 'input' so the segmented cells redraw from the restored value
+              if (pEl) { pEl.value = keepPin; pEl.dispatchEvent(new Event("input")); }
+              return;
+            }
             err.textContent = "Quick check — please verify below and try again.";
             return;
           }
@@ -701,6 +763,7 @@
         // ---- recovery-code handoff (signup + reset success) ----
         function showRecovery(token, username, code) {
           addGuard();                         // Escape disabled for this un-dismissable state
+          dismiss.setDismissable(false);      // ✕ removed + veil-click inert; only "I've saved my code" exits
           mbody.innerHTML = "";
           mbody.appendChild(el("p", {}, "Your account is ready. Save this recovery code:"));
           mbody.appendChild(el("div", { class: "recovery-code" }, code));
