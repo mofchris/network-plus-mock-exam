@@ -89,6 +89,15 @@ give each a globally unique `id`, and add your file with a `<script>` tag in `in
 Run `node --check data/yourfile.js` before loading. A syntax error silently drops the whole
 file.
 
+**After changing any app file**, regenerate the offline cache manifest:
+
+    node tools/build-sw.mjs
+
+`sw.js` pins installed users to a fixed list of files, so skipping this leaves
+them on the old version — new questions included. Running `node --test` from the
+repo root fails with "sw.js is stale" if you forget, so run the tests before you
+push.
+
 ## Disclaimer
 
 CompTIA® and Network+® are registered trademarks of CompTIA, Inc. This project is an

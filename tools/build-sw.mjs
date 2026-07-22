@@ -66,6 +66,11 @@ function render(version, urls) {
 const CACHE = "${CACHE_PREFIX}-${version}";
 const SHELL = "./";
 const PRECACHE = ${JSON.stringify(urls, null, 2)};
+// CacheStorage is ORIGIN-scoped, not scope-scoped. Three PWAs share
+// https://mofchris.github.io, so an unfiltered sweep here deletes the other
+// apps' precaches — and they do not repopulate until their own sw.js changes
+// bytes, permanently breaking their offline launch. Only ever delete our own.
+const OWNED = /^${CACHE_PREFIX}-/;
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -81,7 +86,7 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys()
       .then((keys) => Promise.all(
-        keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)),
+        keys.filter((k) => OWNED.test(k) && k !== CACHE).map((k) => caches.delete(k)),
       ))
       .then(() => self.clients.claim()),
   );
@@ -90,7 +95,7 @@ self.addEventListener("activate", (event) => {
 // ignoreVary matters: crossorigin-attributed loads send an Origin header whose
 // Vary would otherwise fail to match the precached response. Everything cached
 // here is a same-origin static asset keyed by URL alone.
-const MATCH = { ignoreSearch: true, ignoreVary: true };
+const MATCH = { cacheName: CACHE, ignoreSearch: true, ignoreVary: true };
 
 self.addEventListener("fetch", (event) => {
   const req = event.request;
