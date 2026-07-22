@@ -12,6 +12,13 @@ way to reset a forgotten PIN (there is no email recovery), so save it somewhere 
 
 **Take it here:** open `index.html`, or use the hosted version on GitHub Pages.
 
+**Install it:** on iOS, open the hosted version in Safari and tap **Share → Add
+to Home Screen**. It then launches like a native app, with no browser chrome, and
+works with no connection at all. Two things worth knowing: open it once while
+online, since that first launch is when it caches itself; and sign in *before*
+installing, because iOS gives an installed app its own storage separate from
+Safari's, so signing in is what carries your progress across.
+
 ## What it does
 
 - **Full mock exam**: 75 questions in 90 minutes, PBQs first, weighted to the official
@@ -81,6 +88,15 @@ Every question carries a `domain` (1–5), a `diff` (`easy`/`medium`/`hard`), an
 give each a globally unique `id`, and add your file with a `<script>` tag in `index.html`.
 Run `node --check data/yourfile.js` before loading. A syntax error silently drops the whole
 file.
+
+**After changing any app file**, regenerate the offline cache manifest:
+
+    node tools/build-sw.mjs
+
+`sw.js` pins installed users to a fixed list of files, so skipping this leaves
+them on the old version — new questions included. Running `node --test` from the
+repo root fails with "sw.js is stale" if you forget, so run the tests before you
+push.
 
 ## Disclaimer
 

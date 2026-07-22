@@ -1,0 +1,30 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Network+ icon source</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #c47b2a; }
+  svg { display: block; width: 100vw; height: 100vw; }
+</style>
+<!--
+  Network+ brand mark: one run fanning out to two, ending at two nodes —
+  routing, rather than a generic dot-mesh or a menu stack.
+
+  Single source of truth for both the home-screen icon and the in-app header
+  logo (js/app.js renders icons/icon-192.png rather than repeating this).
+
+  The translate(4.5 0) centres the mark's MEASURED ink box (l=87 t=138 r=416
+  b=374) on the tile. Vertically it already sits true.
+-->
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" fill="#c47b2a"/>
+  <g transform="translate(4.5 0)">
+    <g fill="none" stroke="#ffffff" stroke-width="50" stroke-linecap="round">
+      <path d="M112 256h84c40 0 40-86 80-86h108"/>
+      <path d="M112 256h84c40 0 40 86 80 86h108"/>
+    </g>
+    <g fill="#101827">
+      <circle cx="384" cy="170" r="32"/>
+      <circle cx="384" cy="342" r="32"/>
+    </g>
+  </g>
+</svg>
