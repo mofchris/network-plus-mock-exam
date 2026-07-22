@@ -13,8 +13,11 @@ way to reset a forgotten PIN (there is no email recovery), so save it somewhere 
 **Take it here:** open `index.html`, or use the hosted version on GitHub Pages.
 
 **Install it:** on iOS, open the hosted version in Safari and tap **Share → Add
-to Home Screen**. It then launches like a native app and works fully offline.
-Sign in before installing so your progress comes with you.
+to Home Screen**. It then launches like a native app, with no browser chrome, and
+works with no connection at all. Two things worth knowing: open it once while
+online, since that first launch is when it caches itself; and sign in *before*
+installing, because iOS gives an installed app its own storage separate from
+Safari's, so signing in is what carries your progress across.
 
 ## What it does
 
