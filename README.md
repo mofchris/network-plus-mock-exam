@@ -12,6 +12,10 @@ way to reset a forgotten PIN (there is no email recovery), so save it somewhere 
 
 **Take it here:** open `index.html`, or use the hosted version on GitHub Pages.
 
+**Install it:** on iOS, open the hosted version in Safari and tap **Share → Add
+to Home Screen**. It then launches like a native app and works fully offline.
+Sign in before installing so your progress comes with you.
+
 ## What it does
 
 - **Full mock exam**: 75 questions in 90 minutes, PBQs first, weighted to the official
