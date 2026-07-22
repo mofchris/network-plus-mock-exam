@@ -95,6 +95,12 @@ self.addEventListener("activate", (event) => {
 // ignoreVary matters: crossorigin-attributed loads send an Origin header whose
 // Vary would otherwise fail to match the precached response. Everything cached
 // here is a same-origin static asset keyed by URL alone.
+// cacheName confines lookups to our own precache, which matters on a dev server
+// where two of these apps share scope "/" and their keys genuinely collide.
+// The .catch below is belt-and-braces: per spec (and verified in Chrome 150) a
+// missing cacheName resolves undefined, but that was not verifiable on iOS
+// Safari, and a reject here would turn every in-scope request into a hard
+// failure even online. Falling through to fetch() is always the safe answer.
 const MATCH = { cacheName: CACHE, ignoreSearch: true, ignoreVary: true };
 
 self.addEventListener("fetch", (event) => {
@@ -104,11 +110,11 @@ self.addEventListener("fetch", (event) => {
   // reach the network so sync.js can report its own offline state.
   if (new URL(req.url).origin !== self.location.origin) return;
   event.respondWith(
-    caches.match(req, MATCH).then((hit) => {
+    caches.match(req, MATCH).catch(() => undefined).then((hit) => {
       if (hit) return hit;
       // Any navigation is the app shell; serve it so offline launch works.
       if (req.mode === "navigate") {
-        return caches.match(SHELL, MATCH).then((shell) => shell || fetch(req));
+        return caches.match(SHELL, MATCH).catch(() => undefined).then((shell) => shell || fetch(req));
       }
       return fetch(req);
     }),
