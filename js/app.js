@@ -72,9 +72,7 @@
     book:     { d: "M4 5v14M8 5h12v14H8M8 9h12M8 13h12" },
     quiz:     { d: "M9 11l3 3 8-8M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9" },
     alert:    { d: "M12 3l9 16H3zM12 9v4M12 17h.01" },
-    tutor:    { d: "M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z" },
-    logo:     { d: "M6 8.4v3.2a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8.4M12 13.6v2",
-                circle3: [[6, 6, 2.4], [18, 6, 2.4], [12, 18, 2.4]] }
+    tutor:    { d: "M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z" }
   };
 
   NP.icon = function (name, size, strokeWidth) {
@@ -263,7 +261,9 @@
 
     const head = el("div", { class: "tophead" },
       el("div", { class: "brandwrap" },
-        el("span", { class: "logo" }, NP.icon("logo", 20)),
+        // The header mark is the app icon itself — one source of truth for the
+        // geometry, and it is precached, so it is available offline.
+        el("span", { class: "logo", html: '<img src="icons/icon-192.png" alt="">' }),
         el("div", { class: "names" },
           el("div", { class: "pname" }, "Network+ Simulator"),
           el("div", { class: "psub" }, "N10-009 · independent study tool"))),
